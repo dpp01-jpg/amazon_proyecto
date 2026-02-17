@@ -1,0 +1,140 @@
+/*FOOTER 1*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+.footer-top a {
+    display: block;
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+
+    background-color: #37475a;   /* color SIEMPRE visible */
+    color: #fff;
+    text-decoration: none;
+
+    transition: background-color 0.2s ease;
+}
+
+.footer-top a:hover {
+    background-color: #485769;   /* solo cambia el tono */
+}
+/*FOOTER 2*/
+.footer-links {
+    display: flex;
+    justify-content: space-between;
+    padding: 40px 60px;
+    flex-wrap: wrap;
+    background-color: #232f3e
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    min-width: 200px;
+}
+
+.column h4 {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #ddd;
+}
+
+.column a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.column a:hover {
+    text-decoration: underline;
+}
+/*FOOTER 3*/
+/* Logo y botones inferiores */
+.footer-settings {
+    border-top: 0.05px solid  #bbb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+    gap: 20px;
+    background-color: #232f3e
+}
+
+.footer-logo {
+    width: 80px;
+}
+
+.selectors button {
+    background: transparent;
+    color: #ccc;
+    border: 1px solid #848688;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/*FOOTER 4*/
+.footer-services {
+    background-color: #131a22;
+    padding: 40px 60px;
+    font-family: Arial, sans-serif;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px 60px;
+}
+
+.service {
+    text-decoration: none;
+    color: #bbb;
+    font-size: 13px;
+    line-height: 1.4;
+    display: block;
+}
+
+.service strong {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.service:hover {
+    text-decoration: underline;
+}
+/*FOOTER 5*/
+.footer-legal {
+    background-color: #131a22;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 12px; /* Fuente más pequeña para temas legales */
+    color: #ddd;
+}
+
+.footer-legal div {
+    margin-bottom: 10px;
+}
+
+.footer-legal a {
+    color: #ddd;
+    text-decoration: none;
+    margin: 0 10px; /* Separación horizontal entre enlaces */
+}
+
+.footer-legal a:hover {
+    text-decoration: underline;
+}
+
+.footer-legal p {
+    margin-top: 5px;
+    color: #aaa; /* Color ligeramente más apagado para el copyright */
+}
