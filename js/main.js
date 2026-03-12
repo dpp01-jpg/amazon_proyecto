@@ -42,13 +42,7 @@ async function getData() {
 
 function renderCards(data) {
   // Limpiamos e inyectamos la sección del Hero primero
-  contentGrid.innerHTML = `
-    <section class="hero-section">
-        <div class="placeholder-img-large">
-            <img src="https://m.media-amazon.com/images/I/A1ACfoI4+AL._SX3000_.jpg" alt="Banner principal" class="hero-img">
-        </div>
-    </section>
-  `;
+  contentGrid.innerHTML = "";
 
   // Iteramos sobre los datos
   data.forEach((item) => {

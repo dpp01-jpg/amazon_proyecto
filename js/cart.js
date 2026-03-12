@@ -64,3 +64,5 @@ function loadCart() {
 
 // Cargamos el carrito al iniciar este archivo
 loadCart();
+
+
