@@ -1,0 +1,197 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #0f1111;
+}
+
+/* Logo */
+.logo-contenedor {
+    background-color: white;
+    text-align: center;
+    margin-top: 14px;
+    margin-bottom: 18px;
+}
+
+#logo-black {
+    width: 103px;
+    height: 31px;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+/* Contenedor principal */
+.contenedor-principal {
+    width: 348px;
+    margin: 0 auto;
+}
+
+/* Caja login */
+.caja-login {
+    width: 348px;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    padding: 20px 26px;
+    background-color: #ffffff;
+}
+
+/* Título */
+.caja-login h2 {
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: #0f1111;
+}
+
+/* Label */
+.caja-login label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 19px;
+    margin-bottom: 2px;
+    color: #0f1111;
+}
+
+/* Input */
+.caja-login input {
+    width: 100%;
+    height: 31px;
+    padding: 3px 7px;
+    border: 1px solid #888c8c;
+    border-radius: 3px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    outline: none;
+    font-size: 13px;
+    color: #0f1111;
+    background-color: #ffffff;
+}
+
+.caja-login input:focus {
+    border-color: #007185;
+    box-shadow: 0 0 3px 2px rgba(0, 118, 255, 0.15);
+}
+
+/* Botón principal */
+.caja-login button {
+    width: 100%;
+    height: 29px;
+    background-color: #ffd814;
+    border: 1px solid #fcd200;
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #0f1111;
+}
+
+.caja-login button:hover {
+    background-color: #f7ca00;
+}
+
+/* Texto legal */
+.texto-legal {
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 18px;
+    color: #0f1111;
+}
+
+.texto-legal a,
+.ayuda a,
+.empresa a,
+.footer-enlaces a {
+    color: #2162a1;
+    text-decoration: none;
+}
+
+.texto-legal a:hover,
+.ayuda a:hover,
+.empresa a:hover,
+.footer-enlaces a:hover {
+    color: #c7511f;
+    text-decoration: underline;
+}
+
+/* Ayuda */
+.ayuda {
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+/* Línea separadora */
+.caja-login hr {
+    margin: 20px 0 14px;
+    border: none;
+    border-top: 1px solid #e7e7e7;
+}
+
+/* Subtítulo empresa */
+.caja-login h3 {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 19px;
+    margin-bottom: 2px;
+    color: #0f1111;
+}
+
+.empresa {
+    font-size: 13px;
+    line-height: 19px;
+}
+
+/* Nueva cuenta */
+.nueva-cuenta {
+    width: 348px;
+    margin-top: 22px;
+    text-align: center;
+}
+
+.nueva-cuenta p {
+    font-size: 12px;
+    color: #565959;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Botón secundario */
+.boton-secundario {
+    width: 100%;
+    height: 29px;
+    background-color: #f0f2f2;
+    border: 1px solid #adb1b8;
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #0f1111;
+}
+
+.boton-secundario:hover {
+    background-color: #e3e6e6;
+}
+
+/* Footer */
+footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 12px;
+    color: #565959;
+    padding: 18px 0 30px;
+    border-top: 1px solid #e7e7e7;
+}
+
+.footer-enlaces {
+    margin-bottom: 10px;
+}
+
+.footer-enlaces a {
+    margin: 0 8px;
+    font-size: 11px;
+}
