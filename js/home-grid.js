@@ -48,18 +48,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <h3>${cat.nombre}</h3>
                         <div class="rejilla-4">
                             ${cat.products.map(p => {
-                                // Lógica de promociones: si tiene promo_percent, mostramos el badge rojo
-                                const promoSpan = p.promo_percent 
-                                    ? `<span>-${p.promo_percent}% ${p.promo_text || ''}</span>` 
-                                    : "";
-                                
-                                return `
+                    // Lógica de promociones: si tiene promo_percent, mostramos el badge rojo
+                    const promoSpan = p.promo_percent
+                        ? `<span>-${p.promo_percent}% ${p.promo_text || ''}</span>`
+                        : "";
+
+                    return `
                                     <a href="./producto/product.html?id=${p.id}" class="mini-cuadro">
                                         <img src="${p.image}" alt="${p.title}">
                                         ${promoSpan}
                                     </a>
                                 `;
-                            }).join('')}
+                }).join('')}
                         </div>
                         <a href="categorias.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
                     </div>

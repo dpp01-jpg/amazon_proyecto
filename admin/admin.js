@@ -95,7 +95,7 @@ function renderTable(products) {
     products.forEach(p => {
         const tr = document.createElement('tr');
         const promoInfo = p.promo_percent ? `<br><span style="color:red; font-size:12px;">-${p.promo_percent}% ${p.promo_text || ''}</span>` : '';
-        
+
         tr.innerHTML = `
             <td>${p.id}</td>
             <td>${p.title}${promoInfo}</td>
@@ -138,7 +138,7 @@ productForm.addEventListener('submit', async (e) => {
             alert(`Producto ${id ? 'actualizado' : 'creado'} con éxito.`);
             resetForm();
             fetchProducts();
-        } 
+        }
     } catch (err) {
         console.error(err);
         alert('Error de conexión con el servidor.');
@@ -358,7 +358,7 @@ async function fetchCategoriesAdmin() {
     try {
         const response = await fetch(`${API_URL}/categories`);
         const cats = await response.json();
-        
+
         // 1. Actualizar tabla de categorías
         const tbody = document.querySelector('#categoriesTable tbody');
         if (tbody) {

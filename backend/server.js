@@ -7,6 +7,51 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const mysql = require('mysql2/promise');
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT,
+});
+async function debugDatabases() {
+    try {
+        const [rows] = await pool.query('SHOW DATABASES');
+        console.log('📦 DATABASES DISPONIBLES:');
+        console.table(rows);
+    } catch (err) {
+        console.error('❌ Error listando DBs:', err);
+    }
+}
+
+debugDatabases();
+
+async function debugServerInfo() {
+    const [rows] = await pool.query(`
+    SELECT 
+      @@hostname AS host,
+      @@port AS port,
+      @@version AS version
+  `);
+
+    console.log('🖥️ MYSQL INFO:');
+    console.table(rows);
+}
+
+debugServerInfo();
+
+async function showTables() {
+    try {
+        const [rows] = await pool.query('SHOW TABLES FROM amazon_db');
+        console.log('📦 TABLAS EN amazon_db:');
+        console.table(rows);
+    } catch (err) {
+        console.error('❌ Error:', err.message);
+    }
+}
+
+showTables();
 // ========================
 // ENDPOINTS PRODUCTOS
 // ========================
@@ -226,7 +271,7 @@ app.get('/api/home-grid', async (req, res) => {
     try {
         // 1. Obtener todas las categorías con su configuración de layout
         const [categories] = await db.query('SELECT * FROM categorias ORDER BY id ASC');
-        
+
         // 2. Para cada categoría, obtener sus productos (limitamos según necesidades del grid)
         const gridData = await Promise.all(categories.map(async (cat) => {
             // Si el layout es grid4 necesitamos 4 fotos, si es grid2 necesitamos 2, si es single 1
@@ -267,7 +312,7 @@ app.get('/api/categories', async (req, res) => {
 
 // POST nueva categoría
 app.post('/api/categories', async (req, res) => {
-    if (!await verifyStaff(req.body.adminEmail)) return res.status(403).json({error: 'Forbidden'});
+    if (!await verifyStaff(req.body.adminEmail)) return res.status(403).json({ error: 'Forbidden' });
     try {
         const { nombre, layout_type, link_text } = req.body;
         const [result] = await db.query(
@@ -282,7 +327,7 @@ app.post('/api/categories', async (req, res) => {
 
 // PUT actualizar categoría
 app.put('/api/categories/:id', async (req, res) => {
-    if (!await verifyStaff(req.body.adminEmail)) return res.status(403).json({error: 'Forbidden'});
+    if (!await verifyStaff(req.body.adminEmail)) return res.status(403).json({ error: 'Forbidden' });
     try {
         const { nombre, layout_type, link_text } = req.body;
         await db.query(
@@ -297,7 +342,7 @@ app.put('/api/categories/:id', async (req, res) => {
 
 // DELETE categoría
 app.delete('/api/categories/:id', async (req, res) => {
-    if (!await verifyStaff(req.query.adminEmail)) return res.status(403).json({error: 'Forbidden'});
+    if (!await verifyStaff(req.query.adminEmail)) return res.status(403).json({ error: 'Forbidden' });
     try {
         await db.query('DELETE FROM categorias WHERE id = ?', [req.params.id]);
         res.json({ message: 'Categoría eliminada' });
@@ -365,7 +410,7 @@ app.delete('/api/users/:id', async (req, res) => {
     res.json({ message: 'Usuario eliminado del sistema' });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -50,8 +50,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Dividir el texto del campo detalles por salto de línea
             const lineas = product.detalles.split('\\n');
             lineas.forEach(linea => {
-                if(linea.trim() === '') return;
-                
+                if (linea.trim() === '') return;
+
                 // Si la línea dice "Marca: Sony", partir en Clave/Valor
                 const separador = linea.indexOf(':');
                 if (separador !== -1) {

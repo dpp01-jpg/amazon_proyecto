@@ -125,3 +125,6 @@ Si deseas ejecutar todo el empaquetado del software tras instalarlo por primera 
    - **Email:** `admin`
    - **Contraseña:** `1234`
 4. Al entrar accederás a toda la gestión. Puedes pedir a amigos que pasen por la tienda pública y se registren para, a posteriori, usar este usuario `admin` e imponerles rangos o aplicarles suspensiones de 5 minutos al instante para observar su comportamiento.
+
+importar base de datos:
+mysql -u root -p amazon_db < "url"

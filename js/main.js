@@ -12,10 +12,10 @@ import { addToCartLogic } from "./cart.js";
             if (status.isBanned) {
                 alert(`Haz sido expulsado de Amazon Clone.\nMotivo: ${status.reason || 'Sin motivo'}\nTu baneo termina el: ${new Date(status.until).toLocaleString()}`);
                 localStorage.removeItem('user');
-                window.location.href = '/amazon_proyecto/index.html'; 
+                window.location.href = '/amazon_proyecto/index.html';
             }
         }
-    } catch(err) {
+    } catch (err) {
         console.error('Error interno comprobando baneos:', err);
     }
 })();
@@ -25,7 +25,7 @@ const zonaDatos = document.querySelector("#zona-datos-js");
 
 let localdata = [];
 
-window.addCart = function(id) {
+window.addCart = function (id) {
     const cardSelected = localdata.find((g) => g.id === id);
     if (cardSelected) {
         addToCartLogic(cardSelected);
