@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Back Office - Administración</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #e38800;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f8f8f8;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #2196F3;
+        }
+
+        .delete-btn {
+            background: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Bloqueo de Seguridad -->
+    <div id="admin-login-overlay"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #232F3E; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Arial', sans-serif;">
+        <div
+            style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 380px; text-align: center;">
+            <h2 style="margin-top: 0; color: #111;">Acceso Restringido</h2>
+            <p style="margin-bottom: 25px; color: #555; font-size: 14px;">Identifícate con un usuario de la base de
+                datos para administrar Amazon Clone.</p>
+
+            <input type="email" id="admin-email" placeholder="Correo Electrónico"
+                style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+            <input type="password" id="admin-pwd" placeholder="Contraseña"
+                style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+
+            <button onclick="loginAdmin()"
+                style="width: 100%; padding: 12px; background-color: #f0c14b; border: 1px solid #a88734; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 15px;">Entrar
+                al Administrador</button>
+            <p id="admin-error" style="color: #c40000; font-weight: bold; margin-top: 15px; display: none;">Credenciales
+                inválidas.</p>
+        </div>
+    </div>
+
+    <!-- MAIN ADMIN PANEL (Hidden by default by the overlay) -->
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="margin: 0;">Gestión de Productos (Back Office)</h1>
+            <button onclick="logoutAdmin()" style="background: #d9534f;">Cerrar Sesión</button>
+        </div>
+
+        <form id="productForm">
+            <input type="hidden" id="productId">
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" id="title" required>
+            </div>
+            <div class="form-group">
+                <label>Precio (€)</label>
+                <input type="number" step="0.01" id="price" required>
+            </div>
+            <div class="form-group">
+                <label>URL Imagen</label>
+                <input type="text" id="image" required>
+            </div>
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Detalles Técnicos</label>
+                <textarea id="detalles"
+                    placeholder="Introduce datos (uno por línea), Ej:&#10;Marca: Amazon&#10;Peso: 2kg"
+                    rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Categoría</label>
+                <select id="id_categoria">
+                    <!-- Dinámico desde JS -->
+                </select>
+            </div>
+
+            <!-- NUEVOS CAMPOS DE PROMOCIÓN -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>% Descuento (opcional)</label>
+                    <input type="number" id="promo_percent" placeholder="Ej: 35">
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label>Texto Oferta (opcional)</label>
+                    <input type="text" id="promo_text" placeholder="Ej: Oferta flash">
+                </div>
+            </div>
+            <button type="submit" id="submitBtn">Añadir Producto</button>
+            <button type="button" id="cancelBtn" style="display:none; background:#888;">Cancelar</button>
+        </form>
+
+        <h2>Lista de Productos</h2>
+        <table id="productsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Cargados dinámicamente -->
+            </tbody>
+        </table>
+
+        <!-- GESTIÓN DE CATEGORÍAS (CUADROS DE LA HOME) -->
+        <div id="categories-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <h2>Gestión de Categorías (Grid Principal)</h2>
+            <p style="font-size: 14px; color: #666;">Configura qué categorías aparecen en la Home y su diseño.</p>
+            
+            <form id="categoryForm" style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
+                <input type="hidden" id="categoryId">
+                <div class="form-group">
+                    <label>Nombre de la Categoría</label>
+                    <input type="text" id="cat-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Diseño (Layout)</label>
+                    <select id="cat-layout">
+                        <option value="grid4">Rejilla de 4 productos</option>
+                        <option value="grid2">Rejilla de 2 productos</option>
+                        <option value="single">Imagen única grande</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Texto del Enlace</label>
+                    <input type="text" id="cat-link" placeholder="Ej: Ver más">
+                </div>
+                <button type="submit" style="background: #007bff;">Guardar Categoría</button>
+                <button type="button" id="cancelCatBtn" style="display:none;">Cancelar</button>
+            </form>
+
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Layout</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- GESTIÓN DE CATEGORÍAS (CUADROS DE LA HOME) -->
+        <div id="categories-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <h2>Gestión de Categorías (Grid Principal)</h2>
+            <p style="font-size: 14px; color: #666;">Configura qué categorías aparecen en la Home y su diseño.</p>
+            
+            <form id="categoryForm" style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
+                <input type="hidden" id="categoryId">
+                <div class="form-group">
+                    <label>Nombre de la Categoría</label>
+                    <input type="text" id="cat-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Diseño (Layout)</label>
+                    <select id="cat-layout">
+                        <option value="grid4">Rejilla de 4 productos</option>
+                        <option value="grid2">Rejilla de 2 productos</option>
+                        <option value="single">Imagen única grande</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Texto del Enlace</label>
+                    <input type="text" id="cat-link" placeholder="Ej: Ver más">
+                </div>
+                <button type="submit" style="background: #007bff;">Guardar Categoría</button>
+                <button type="button" id="cancelCatBtn" style="display:none;">Cancelar</button>
+            </form>
+
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Layout</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Aquí se inyectará dinámicamente el Panel de Usuarios si eres Root -->
+        <div id="users-container" style="margin-top: 50px;"></div>
+
+        <!-- GESTIÓN DE BANNERS (CARRUSEL) -->
+        <div id="banners-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <h2>Gestión de Banners (Carrusel)</h2>
+            <p style="font-size: 14px; color: #666;">Añade o elimina imágenes del carrusel principal. (Accesible por
+                Root y Staff)</p>
+
+            <form id="bannerForm"
+                style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>URL de la Imagen</label>
+                    <input type="text" id="banner-image" placeholder="Ej: imagenes/img/imagen_3.jpg" required>
+                </div>
+                <div class="form-group">
+                    <label>Texto Alt / Descripción</label>
+                    <input type="text" id="banner-alt" placeholder="Ej: Nueva Colección">
+                </div>
+                <button type="submit" style="background: #28a745;">Añadir Banner</button>
+            </form>
+
+            <table id="bannersTable">
+                <thead>
+                    <tr>
+                        <th>Miniatura</th>
+                        <th>Ruta / Alt</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="./admin.js"></script>
+</body>
+
+</html>

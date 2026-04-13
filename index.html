@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,280 +13,186 @@
     <script defer type="module" src="./js/main.js"></script>
     <script defer type="module" src="./js/cart.js"></script>
     <script defer src="./js/carrusel.js"></script>
+    <script defer src="./js/home-grid.js"></script>
 </head>
 
 <body>
 
-<!-- ========================================================= -->
-<!-- ======================== HEADER ========================= -->
-<!-- ========================================================= -->
-<header class="main-header">
+    <!-- ========================================================= -->
+    <!-- ======================== HEADER ========================= -->
+    <!-- ========================================================= -->
+    <header class="main-header">
 
-    <!-- LOGO -->
-    <div class="logo nav-hover">
-        <img src="./imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
-    </div>
+        <!-- LOGO -->
+        <div class="logo nav-hover">
+            <img src="./imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
+        </div>
 
-    <!-- UBICACIÓN -->
-    <div class="location nav-hover">
-        <span>Enviar a</span>
-        <strong>España</strong>
-    </div>
+        <!-- UBICACIÓN -->
+        <div class="location nav-hover">
+            <span>Enviar a</span>
+            <strong>España</strong>
+        </div>
 
-    <!-- BUSCADOR -->
-    <div class="search-container">
-        <select class="search-category">
-            <option>Todos</option>
-        </select>
-        <input type="text" placeholder="Buscar en Amazon.es" />
-        <button class="search-btn">🔍</button>
-    </div>
+        <!-- BUSCADOR -->
+        <div class="search-container">
+            <select class="search-category">
+                <option>Todos</option>
+            </select>
+            <input type="text" placeholder="Buscar en Amazon.es" />
+            <button class="search-btn">🔍</button>
+        </div>
 
-    <!-- HERRAMIENTAS DE USUARIO -->
-    <div class="nav-tools">
+        <!-- HERRAMIENTAS DE USUARIO -->
+        <div class="nav-tools">
 
-        <!-- IDIOMA -->
-        <div class="dropdown nav-hover">
-            <span class="dropbtn">🇪🇸 ES ▾</span>
-            <div class="dropdown-content">
-                <a href="#">Español (ES)</a>
-                <a href="#">English (EN)</a>
-                <a href="#">Português (PT)</a>
+            <!-- IDIOMA -->
+            <div class="dropdown nav-hover">
+                <span class="dropbtn">🇪🇸 ES ▾</span>
+                <div class="dropdown-content">
+                    <a href="#">Español (ES)</a>
+                    <a href="#">English (EN)</a>
+                    <a href="#">Português (PT)</a>
+                </div>
+            </div>
+
+            <!-- CUENTA -->
+            <div class="nav-item nav-hover">
+                <span id="nav-user-greeting">Hola, identifícate</span>
+                <strong>Cuenta y listas</strong>
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", async () => {
+                    const userGreeting = document.getElementById("nav-user-greeting");
+                    const savedUser = localStorage.getItem("user");
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+
+                            // Verificar en la BD si actualmente está baneado
+                            const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
+                            if (res.ok) {
+                                const status = await res.json();
+                                if (status.isBanned) {
+                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}\nHasta: ${new Date(status.until).toLocaleString()}`);
+                                    localStorage.removeItem("user");
+                                    window.location.reload();
+                                    return;
+                                }
+                            }
+
+                            if (user && user.nombre) {
+                                userGreeting.textContent = "Hola, " + user.nombre;
+                            }
+                        } catch (e) {
+                            console.error("Error al leer usuario", e);
+                        }
+                    }
+                });
+            </script>
+
+            <!-- PEDIDOS -->
+            <div class="nav-item nav-hover">
+                <span>Devoluciones</span>
+                <strong>y Pedidos</strong>
+            </div>
+
+            <!-- CARRITO -->
+            <div class="cart nav-hover">
+                🛒 <strong>Cesta</strong>
+                <span id="cart-count" class="cart-badge">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- ======================== SUB-NAV ======================== -->
+    <!-- ========================================================= -->
+    <nav class="sub-nav">
+        <ul>
+            <li class="nav-hover"><strong>≡ Todo</strong></li>
+            <li class="nav-hover">Amazon Haul</li>
+            <li class="nav-hover">Supermercado</li>
+            <li class="nav-hover">Ofertas</li>
+            <li class="nav-hover">Amazon Basics</li>
+            <li class="nav-hover">Informática</li>
+        </ul>
+    </nav>
+
+    <!-- ========================================================= -->
+    <!-- ===================== HERO / CARRUSEL =================== -->
+    <!-- ========================================================= -->
+    <section class="hero-section">
+
+        <div class="carousel-container">
+            <div class="carousel-track">
+                <!-- Dinámico -->
             </div>
         </div>
 
-        <!-- CUENTA -->
-        <div class="nav-item nav-hover">
-            <span>Hola, identifícate</span>
-            <strong>Cuenta y listas</strong>
+        <button class="anterior"><i class="anterior1"></i></button>
+        <button class="siguiente"><i class="siguiente1"></i></button>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- ========================= GRID ========================== -->
+    <!-- ========================================================= -->
+    <main class="content-grid">
+
+        <div class="caja-amazon" id="main-grid">
+            <!-- Contenido dinámico desde js/home-grid.js -->
         </div>
 
-        <!-- PEDIDOS -->
-        <div class="nav-item nav-hover">
-            <span>Devoluciones</span>
-            <strong>y Pedidos</strong>
+        <div class="zona-datos-js" id="zona-datos-js"></div>
+
+    </main>
+    <!-- ========================================================= -->
+    <!-- ======================== FOOTER ========================= -->
+    <!-- ========================================================= -->
+    <footer class="footer">
+
+        <div class="footer-top">
+            <a href="#">Volver arriba</a>
         </div>
 
-        <!-- CARRITO -->
-        <div class="cart nav-hover">
-            🛒 <strong>Cesta</strong>
-            <span id="cart-count" class="cart-badge">0</span>
-        </div>
-    </div>
-</header>
-
-<!-- ========================================================= -->
-<!-- ======================== SUB-NAV ======================== -->
-<!-- ========================================================= -->
-<nav class="sub-nav">
-    <ul>
-        <li class="nav-hover"><strong>≡ Todo</strong></li>
-        <li class="nav-hover">Amazon Haul</li>
-        <li class="nav-hover">Supermercado</li>
-        <li class="nav-hover">Ofertas</li>
-        <li class="nav-hover">Amazon Basics</li>
-        <li class="nav-hover">Informática</li>
-    </ul>
-</nav>
-
-<!-- ========================================================= -->
-<!-- ===================== HERO / CARRUSEL =================== -->
-<!-- ========================================================= -->
-<section class="hero-section">
-
-    <div class="carousel-container">
-        <div class="carousel-track">
-
-            <div class="carousel-slide">
-                <img src="imagenes/img/imagen_1.jpg" alt="Banner 1">
+        <div class="footer-links">
+            <div class="column">
+                <h4>Conócenos</h4>
+                <a href="#">Trabajar en Amazon</a>
+                <a href="#">Sobre Amazon.es</a>
+                <a href="#">Sostenibilidad</a>
+                <a href="#">Amazon Science</a>
             </div>
 
-            <div class="carousel-slide">
-                <img src="imagenes/img/imagen_2.jpg" alt="Banner 2">
+            <div class="column">
+                <h4>Gana dinero con nosotros</h4>
+                <a href="#">Vender en Amazon</a>
+                <a href="#">Programa de afiliados</a>
+                <a href="#">Logística de Amazon</a>
             </div>
 
-        </div>
-    </div>
+            <div class="column">
+                <h4>Métodos de pago Amazon</h4>
+                <a href="#">Métodos de pago</a>
+                <a href="#">Tarjetas regalo</a>
+                <a href="#">Recarga online</a>
+            </div>
 
-    <button class="anterior"><i class="anterior1"></i></button>
-    <button class="siguiente"><i class="siguiente1"></i></button>
-
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================= GRID ========================== -->
-<!-- ========================================================= -->
-<main class="content-grid">
-
-    <div class="caja-amazon">
-
-        <!-- cuadro 1 -->
-        <div class="cuadro-alumno">
-            <h3>Oferta Top</h3>
-
-            <div class="rejilla-4">
-                <a href="/amazon_proyecto/producto/product.html" class="mini-cuadro">
-                    <img src="imagenes/img/01.OfertaTop/imagen_3.jpg" alt="Producto oferta 1">
-                    <span>-35% Oferta flash</span>
-                </a>
-
-                <a href="/amazon_proyecto/producto/product.html" class="mini-cuadro">
-                    <img src="imagenes/img/01.OfertaTop/imagen_4.jpg" alt="Producto oferta 2">
-                    <span>-29% Oferta flash</span>
-                </a>
-
-                <a href="/amazon_proyecto/producto/product.html" class="mini-cuadro">
-                    <img src="imagenes/img/01.OfertaTop/imagen_5.jpg" alt="Producto oferta 3">
-                    <span>-41% Oferta flash</span>
-                </a>
-
-                <a href="/amazon_proyecto/producto/product.html" class="mini-cuadro">
-                    <img src="imagenes/img/01.OfertaTop/imagen_6.jpg" alt="Producto oferta 4">
-                    <span>-29% Oferta flash</span>
-                </a>
+            <div class="column">
+                <h4>¿Necesitas ayuda?</h4>
+                <a href="#">Localizar o gestionar compras</a>
+                <a href="#">Tarifas y políticas de envío</a>
+                <a href="#">Atención al cliente</a>
             </div>
         </div>
 
-        <!-- cuadro 2 -->
-        <div class="cuadro-alumno">
-            <h3>Ahorra en dispositivos Amazon</h3>
-
-            <div class="rejilla-2">
-                <a href="producto5.html" class="imagen-grande-cuadro">
-                    <img src="imagenes/img/02.Ahorra/imagen_7.jpg" alt="Dispositivo amazon 1">
-                </a>
-
-                <a href="producto6.html" class="imagen-grande-cuadro">
-                    <img src="imagenes/img/02.Ahorra/imagen_8.jpg" alt="Dispositivo amazon 2">
-                </a>
-            </div>
-
-            <a href="categorias.html" class="enlace-cuadro">Ver más</a>
+        <div class="footer-legal">
+            <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
         </div>
 
-        <!-- cuadro 3 -->
-        <div class="cuadro-alumno">
-            <h3>Informática y accesorios</h3>
-
-            <a href="/amazon_proyecto/categoria/category.html" class="imagen-una-sola">
-                <img src="imagenes/img/03.Informática/imagen_11.jpg" alt="Informática y accesorios">
-            </a>
-
-            <a href="/amazon_proyecto/categoria/category.html" class="enlace-cuadro">Descubre más</a>
-        </div>
-
-        <!-- cuadro 4 -->
-        <div class="columna-login">
-            <div class="cuadro-login">
-                <h3>Identifícate para una mejor experiencia</h3>
-
-                <a href="/amazon_proyecto/registro/login.html" class="boton-login-falso">
-                    Inicia sesión de manera segura
-                </a>
-            </div>
-
-            <div class="bloque-publicidad">
-                <a href="#" class="caja-anuncio-azul">
-                    <img src="imagenes/img/imagen_11.jpg" alt="Prime Video">
-                </a>
-            </div>
-        </div>
-        <!-- segunda fila -->
-
-        <!-- cuadro 5 -->
-        <div class="cuadro-alumno">
-            <h3>Ponte en forma desde casa</h3>
-
-            <a href="informatica.html" class="imagen-una-sola">
-                <img src="imagenes/img/imagen_12.jpg" alt="Ponte en forma desde casa">
-            </a>
-
-            <a href="categorias.html" class="enlace-cuadro">Explora ahora</a>
-        </div>
-
-        <!-- cuadro 6 -->
-        <div class="cuadro-alumno">
-            <h3>Nuevo mes: novedades desde 0,99€</h3>
-
-            <a href="informatica.html" class="imagen-una-sola">
-                <img src="imagenes/img/imagen_13.jpg" alt="Nuevo mes: novedades desde 0,99€">
-            </a>
-
-            <a href="categorias.html" class="enlace-cuadro">Explora más de Amazon Haul</a>
-        </div>
-
-        <!-- cuadro 7 -->
-        <div class="cuadro-alumno">
-            <h3>Los Hermanos Demolición - Nueva película</h3>
-
-            <a href="informatica.html" class="imagen-una-sola">
-                <img src="imagenes/img/imagen_14.jpg" alt="Los Hermanos Demolición - Nueva película">
-            </a>
-
-            <a href="categorias.html" class="enlace-cuadro">Ver ahora</a>
-        </div>
-
-        <!-- cuadro 8 -->
-        <div class="cuadro-alumno">
-            <h3>Descubre los productos más vendidos</h3>
-
-            <a href="informatica.html" class="imagen-una-sola">
-                <img src="imagenes/img/imagen_15.jpg" alt="Descubre los productos más vendidos">
-            </a>
-
-            <a href="categorias.html" class="enlace-cuadro">Descúbrelos</a>
-        </div>
-
-    </div>
-
-    <div class="zona-datos-js" id="zona-datos-js"></div>
-
-</main>
-<!-- ========================================================= -->
-<!-- ======================== FOOTER ========================= -->
-<!-- ========================================================= -->
-<footer class="footer">
-
-    <div class="footer-top">
-        <a href="#">Volver arriba</a>
-    </div>
-
-    <div class="footer-links">
-        <div class="column">
-            <h4>Conócenos</h4>
-            <a href="#">Trabajar en Amazon</a>
-            <a href="#">Sobre Amazon.es</a>
-            <a href="#">Sostenibilidad</a>
-            <a href="#">Amazon Science</a>
-        </div>
-
-        <div class="column">
-            <h4>Gana dinero con nosotros</h4>
-            <a href="#">Vender en Amazon</a>
-            <a href="#">Programa de afiliados</a>
-            <a href="#">Logística de Amazon</a>
-        </div>
-
-        <div class="column">
-            <h4>Métodos de pago Amazon</h4>
-            <a href="#">Métodos de pago</a>
-            <a href="#">Tarjetas regalo</a>
-            <a href="#">Recarga online</a>
-        </div>
-
-        <div class="column">
-            <h4>¿Necesitas ayuda?</h4>
-            <a href="#">Localizar o gestionar compras</a>
-            <a href="#">Tarifas y políticas de envío</a>
-            <a href="#">Atención al cliente</a>
-        </div>
-    </div>
-
-    <div class="footer-legal">
-        <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
-    </div>
-
-</footer>
+    </footer>
 
 </body>
+
 </html>

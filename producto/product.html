@@ -1,103 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style3.css">
 </head>
+
 <body>
-    
-<!-- ========================================================= -->
-<!-- ======================== HEADER ========================= -->
-<!-- ========================================================= -->
-<header class="main-header">
 
-    <!-- LOGO -->
-    <div class="logo nav-hover">
-        <img src="/amazon_proyecto/imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
-    </div>
+    <!-- ========================================================= -->
+    <!-- ======================== HEADER ========================= -->
+    <!-- ========================================================= -->
+    <header class="main-header">
 
-    <!-- UBICACIÓN -->
-    <div class="location nav-hover">
-        <span>Enviar a</span>
-        <strong>España</strong>
-    </div>
+        <!-- LOGO -->
+        <div class="logo nav-hover">
+            <img src="./imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
+        </div>
 
-    <!-- BUSCADOR -->
-    <div class="search-container">
-        <select class="search-category">
-            <option>Todos</option>
-        </select>
-        <input type="text" placeholder="Buscar en Amazon.es" />
-        <button class="search-btn">🔍</button>
-    </div>
+        <!-- UBICACIÓN -->
+        <div class="location nav-hover">
+            <span>Enviar a</span>
+            <strong>España</strong>
+        </div>
 
-    <!-- HERRAMIENTAS DE USUARIO -->
-    <div class="nav-tools">
+        <!-- BUSCADOR -->
+        <div class="search-container">
+            <select class="search-category">
+                <option>Todos</option>
+            </select>
+            <input type="text" placeholder="Buscar en Amazon.es" />
+            <button class="search-btn">🔍</button>
+        </div>
 
-        <!-- IDIOMA -->
-        <div class="dropdown nav-hover">
-            <span class="dropbtn">🇪🇸 ES ▾</span>
-            <div class="dropdown-content">
-                <a href="#">Español (ES)</a>
-                <a href="#">English (EN)</a>
-                <a href="#">Português (PT)</a>
+        <!-- HERRAMIENTAS DE USUARIO -->
+        <div class="nav-tools">
+
+            <!-- IDIOMA -->
+            <div class="dropdown nav-hover">
+                <span class="dropbtn">🇪🇸 ES ▾</span>
+                <div class="dropdown-content">
+                    <a href="#">Español (ES)</a>
+                    <a href="#">English (EN)</a>
+                    <a href="#">Português (PT)</a>
+                </div>
+            </div>
+
+            <!-- CUENTA -->
+            <div class="nav-item nav-hover">
+                <span>Hola, identifícate</span>
+                <strong>Cuenta y listas</strong>
+            </div>
+
+            <!-- PEDIDOS -->
+            <div class="nav-item nav-hover">
+                <span>Devoluciones</span>
+                <strong>y Pedidos</strong>
+            </div>
+
+            <!-- CARRITO -->
+            <div class="cart nav-hover">
+                🛒 <strong>Cesta</strong>
+                <span id="cart-count" class="cart-badge">0</span>
             </div>
         </div>
+    </header>
 
-        <!-- CUENTA -->
-        <div class="nav-item nav-hover">
-            <span>Hola, identifícate</span>
-            <strong>Cuenta y listas</strong>
-        </div>
-
-        <!-- PEDIDOS -->
-        <div class="nav-item nav-hover">
-            <span>Devoluciones</span>
-            <strong>y Pedidos</strong>
-        </div>
-
-        <!-- CARRITO -->
-        <div class="cart nav-hover">
-            🛒 <strong>Cesta</strong>
-            <span id="cart-count" class="cart-badge">0</span>
-        </div>
-    </div>
-</header>
-
-<!-- ========================================================= -->
-<!-- ======================== SUB-NAV ======================== -->
-<!-- ========================================================= -->
-<nav class="sub-nav">
-    <ul>
-        <li class="nav-hover"><strong>≡ Todo</strong></li>
-        <li class="nav-hover">Amazon Haul</li>
-        <li class="nav-hover">Supermercado</li>
-        <li class="nav-hover">Ofertas</li>
-        <li class="nav-hover">Amazon Basics</li>
-        <li class="nav-hover">Informática</li>
-    </ul>
-</nav>
+    <!-- ========================================================= -->
+    <!-- ======================== SUB-NAV ======================== -->
+    <!-- ========================================================= -->
+    <nav class="sub-nav">
+        <ul>
+            <li class="nav-hover"><strong>≡ Todo</strong></li>
+            <li class="nav-hover">Amazon Haul</li>
+            <li class="nav-hover">Supermercado</li>
+            <li class="nav-hover">Ofertas</li>
+            <li class="nav-hover">Amazon Basics</li>
+            <li class="nav-hover">Informática</li>
+        </ul>
+    </nav>
 
 
 
 
-<!----------MAIN------------>
-<main class="contenedor-principal">
+    <!----------MAIN------------>
+    <main class="contenedor-principal">
 
         <!-- ZONA IZQUIERDA: miniaturas + imagen -->
         <section class="zona-imagenes">
             <div class="miniaturas">
-                <img src="/amazon_proyecto/producto/imag/2.jpg" alt="miniatura 1" class="miniatura activa">
-                <img src="/amazon_proyecto/producto/imag/3_.jpg" alt="miniatura 2" class="miniatura">
-                <img src="/amazon_proyecto/producto/imag/4_.jpg" alt="miniatura 3" class="miniatura">
-                <img src="/amazon_proyecto/producto/imag/5_.jpg" alt="miniatura 4" class="miniatura">
-                <img src="/amazon_proyecto/producto/imag/6_.jpg" alt="miniatura 5" class="miniatura">
+                <img src="./producto/imag/1_.jpg" alt="miniatura 1" class="miniatura activa">
+                <img src="./producto/imag/3_.jpg" alt="miniatura 2" class="miniatura">
+                <img src="./producto/imag/4_.jpg" alt="miniatura 3" class="miniatura">
+                <img src="./producto/imag/5_.jpg" alt="miniatura 4" class="miniatura">
+                <img src="./producto/imag/6_.jpg" alt="miniatura 5" class="miniatura">
             </div>
 
             <div class="imagen-grande">
-                <img src="/amazon_proyecto/producto/imag/1_.jpg" alt="Producto principal">
+                <img id="prod-image" src="" alt="Producto principal">
                 <p class="texto-imagen">Haz clic para ver la vista completa</p>
             </div>
         </section>
@@ -106,10 +108,8 @@
         <section class="zona-info">
             <p class="ruta">Bebé &gt; Higiene y cuidado &gt; Toallitas húmedas</p>
 
-            <h1 class="titulo-producto">
-                Dodot Toallitas Pure Aqua Para Bebé, 1152 Toallitas
-                (24 Packs de 48 Unidades), Ayuda A Restaurar El PH Natural De La Piel,
-                99% Agua, Sin plástico
+            <h1 id="prod-title" class="titulo-producto">
+                Cargando producto...
             </h1>
 
             <div class="valoracion">
@@ -122,7 +122,7 @@
             <p class="ventas">4 mil+ comprados el mes pasado</p>
 
             <div class="precio">
-                <span class="simbolo">59</span><span class="decimal">99€</span>
+                <span id="prod-price-main" class="simbolo">0.00</span><span class="decimal">€</span>
             </div>
 
             <p class="precio-unidad">(0,05 € / unidad)</p>
@@ -132,30 +132,19 @@
                 Dependiendo de tu dirección de entrega, el IVA puede variar al finalizar la compra.
             </p>
 
-            <div class="detalles">
-                <p><strong>Marca:</strong> DODOT</p>
-                <p><strong>Tipo de piel:</strong> Normal</p>
-                <p><strong>Características:</strong> 0% plástico en las toallitas, sin alcohol, sin perfume</p>
-                <p><strong>Número de unidades:</strong> 1152</p>
-                <p><strong>Número de productos:</strong> 24</p>
+            <div class="detalles" id="prod-details">
             </div>
 
-            <div class="sobre-producto">
+            <div class="sobre-producto" id="prod-desc">
                 <h2>Acerca de este producto</h2>
-                <ul>
-                    <li>Más suave que el algodón y el agua</li>
-                    <li>Fórmula única que ayuda a restaurar el PH natural</li>
-                    <li>Con 99% agua</li>
-                    <li>Hecho con 0% alcohol y perfume</li>
-                    <li>Adecuadas para la delicada piel de tu recién nacido</li>
-                </ul>
+                <p>Cargando detalles...</p>
             </div>
         </section>
 
         <!-- ZONA DERECHA: caja de compra -->
         <aside class="zona-compra">
             <div class="caja-compra">
-                <p class="precio-lateral">59,99€ <span>(0,05 € / unidad)</span></p>
+                <p class="precio-lateral" id="prod-price-aside">0.00 €</p>
                 <p class="entrega">
                     Entrega GRATIS el viernes, 27 de marzo
                 </p>
@@ -181,6 +170,7 @@
 
     </main>
 
+    <script src="product.js"></script>
 
 
 
@@ -188,50 +178,52 @@
 
 
 
-<!-- ========================================================= -->
-<!-- ======================== FOOTER ========================= -->
-<!-- ========================================================= -->
-<footer class="footer">
 
-    <div class="footer-top">
-        <a href="#">Volver arriba</a>
-    </div>
+    <!-- ========================================================= -->
+    <!-- ======================== FOOTER ========================= -->
+    <!-- ========================================================= -->
+    <footer class="footer">
 
-    <div class="footer-links">
-        <div class="column">
-            <h4>Conócenos</h4>
-            <a href="#">Trabajar en Amazon</a>
-            <a href="#">Sobre Amazon.es</a>
-            <a href="#">Sostenibilidad</a>
-            <a href="#">Amazon Science</a>
+        <div class="footer-top">
+            <a href="#">Volver arriba</a>
         </div>
 
-        <div class="column">
-            <h4>Gana dinero con nosotros</h4>
-            <a href="#">Vender en Amazon</a>
-            <a href="#">Programa de afiliados</a>
-            <a href="#">Logística de Amazon</a>
+        <div class="footer-links">
+            <div class="column">
+                <h4>Conócenos</h4>
+                <a href="#">Trabajar en Amazon</a>
+                <a href="#">Sobre Amazon.es</a>
+                <a href="#">Sostenibilidad</a>
+                <a href="#">Amazon Science</a>
+            </div>
+
+            <div class="column">
+                <h4>Gana dinero con nosotros</h4>
+                <a href="#">Vender en Amazon</a>
+                <a href="#">Programa de afiliados</a>
+                <a href="#">Logística de Amazon</a>
+            </div>
+
+            <div class="column">
+                <h4>Métodos de pago Amazon</h4>
+                <a href="#">Métodos de pago</a>
+                <a href="#">Tarjetas regalo</a>
+                <a href="#">Recarga online</a>
+            </div>
+
+            <div class="column">
+                <h4>¿Necesitas ayuda?</h4>
+                <a href="#">Localizar o gestionar compras</a>
+                <a href="#">Tarifas y políticas de envío</a>
+                <a href="#">Atención al cliente</a>
+            </div>
         </div>
 
-        <div class="column">
-            <h4>Métodos de pago Amazon</h4>
-            <a href="#">Métodos de pago</a>
-            <a href="#">Tarjetas regalo</a>
-            <a href="#">Recarga online</a>
+        <div class="footer-legal">
+            <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
         </div>
 
-        <div class="column">
-            <h4>¿Necesitas ayuda?</h4>
-            <a href="#">Localizar o gestionar compras</a>
-            <a href="#">Tarifas y políticas de envío</a>
-            <a href="#">Atención al cliente</a>
-        </div>
-    </div>
-
-    <div class="footer-legal">
-        <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
-    </div>
-
-</footer>
+    </footer>
 </body>
+
 </html>

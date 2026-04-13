@@ -16,12 +16,21 @@
             <section class="caja-login">
                 <h2>Inicia sesión o crea una cuenta</h2>
 
-                <form>
-                    <label for="usuario">Introduce el número de teléfono móvil o correo electrónico</label>
-                    <input type="text" id="usuario" name="usuario" required>
+                <form id="loginForm">
+                    <p id="errorMsg" style="color:red; font-size:14px; margin-bottom:10px;"></p>
+                    <label for="usuario">Dirección de e-mail</label>
+                    <input type="email" id="usuario" name="usuario" required>
+
+                    <label for="password" style="margin-top:10px; display:block;">Contraseña</label>
+                    <input type="password" id="password" name="password" required style="width:100%; margin-bottom:15px; padding:8px;">
 
                     <button type="submit">Continuar</button>
+                    <p style="margin-top:15px; text-align:center; font-size:13px;">
+                        ¿Eres nuevo en Amazon? <a href="register.html">Crea tu cuenta de Amazon</a>
+                    </p>
                 </form>
+
+                <script src="./login.js"></script>
 
                 <p class="texto-legal">
                     Al continuar, aceptas las
