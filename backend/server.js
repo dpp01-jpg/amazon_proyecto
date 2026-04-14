@@ -65,6 +65,23 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// GET sugerencias de búsqueda (autocompletado) - MUST be before /:id
+app.get('/api/products/suggestions', async (req, res) => {
+    const q = req.query.q || '';
+    if (q.trim().length < 1) return res.json([]);
+    try {
+        const searchTerm = `%${q}%`;
+        const [rows] = await db.query(
+            'SELECT id, title, price, image FROM productos WHERE title LIKE ? OR description LIKE ? LIMIT 5',
+            [searchTerm, searchTerm]
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener sugerencias' });
+    }
+});
+
 // GET producto por ID
 app.get('/api/products/:id', async (req, res) => {
     try {
@@ -365,6 +382,96 @@ app.delete('/api/users/:id', async (req, res) => {
     res.json({ message: 'Usuario eliminado del sistema' });
 });
 
+// ========================
+// ENDPOINTS CARRITO
+// ========================
+
+// GET el carrito de un usuario
+app.get('/api/cart/:userId', async (req, res) => {
+    try {
+        const query = `
+            SELECT c.id_producto as id, p.title, p.price, p.image, p.promo_percent, p.promo_text, c.cantidad as quantity 
+            FROM carrito c
+            JOIN productos p ON c.id_producto = p.id
+            WHERE c.id_usuario = ?
+        `;
+        const [rows] = await db.query(query, [req.params.userId]);
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener el carrito' });
+    }
+});
+
+// POST añadir producto al carrito (o incrementar si existe)
+app.post('/api/cart/:userId', async (req, res) => {
+    try {
+        const { id_producto, cantidad } = req.body;
+        const userId = req.params.userId;
+        
+        // Convertimos a número y aseguramos que sea al menos 1
+        const numQty = parseInt(cantidad, 10);
+        const qty = isNaN(numQty) ? 1 : numQty;
+        
+        console.log(`[CARRITO] User: ${userId}, Prod: ${id_producto}, Qty: ${qty}`);
+
+        const query = `
+            INSERT INTO carrito (id_usuario, id_producto, cantidad) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE cantidad = cantidad + VALUES(cantidad)
+        `;
+        
+        await db.query(query, [userId, id_producto, qty]);
+        res.status(201).json({ message: 'Producto añadido al carrito' });
+    } catch (err) {
+        console.error("Error en el carrito:", err);
+        res.status(500).json({ error: 'Error al añadir al carrito' });
+    }
+});
+
+// PUT actualizar cantidad de un producto en el carrito
+app.put('/api/cart/:userId/:productId', async (req, res) => {
+    try {
+        const { cantidad } = req.body;
+        await db.query(
+            'UPDATE carrito SET cantidad = ? WHERE id_usuario = ? AND id_producto = ?',
+            [cantidad, req.params.userId, req.params.productId]
+        );
+        res.json({ message: 'Cantidad actualizada' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al actualizar cantidad' });
+    }
+});
+
+// DELETE eliminar producto del carrito
+app.delete('/api/cart/:userId/:productId', async (req, res) => {
+    try {
+        await db.query(
+            'DELETE FROM carrito WHERE id_usuario = ? AND id_producto = ?',
+            [req.params.userId, req.params.productId]
+        );
+        res.json({ message: 'Producto eliminado del carrito' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al eliminar producto del carrito' });
+    }
+});
+
+// DELETE vaciar carrito
+app.delete('/api/cart/:userId', async (req, res) => {
+    try {
+        await db.query('DELETE FROM carrito WHERE id_usuario = ?', [req.params.userId]);
+        res.json({ message: 'Carrito vaciado' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al vaciar el carrito' });
+    }
+});
+
+// ========================
+// START SERVER
+// ========================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

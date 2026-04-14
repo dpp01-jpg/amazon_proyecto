@@ -1,0 +1,239 @@
+.cart-main-container {
+    display: flex;
+    max-width: 1500px;
+    margin: 20px auto;
+    padding: 0 20px;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.cart-left-column {
+    flex: 3;
+}
+
+.cart-right-column {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+}
+
+.cart-box {
+    background: white;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #DDD;
+}
+
+.cart-title {
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 2px;
+}
+
+.cart-header-labels {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 14px;
+    color: #565959;
+    padding-bottom: 5px;
+}
+
+.cart-divider {
+    border: 0;
+    border-top: 1px solid #DDD;
+    margin: 10px 0;
+}
+
+.cart-item {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #DDD;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-image-container {
+    width: 180px;
+    min-width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-item-image {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007185;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.cart-item-title:hover {
+    color: #C45500;
+    text-decoration: underline;
+}
+
+.cart-item-stock {
+    font-size: 12px;
+    color: #007600;
+    margin-bottom: 10px;
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+.cart-item-actions select {
+    padding: 5px 10px;
+    border-radius: 7px;
+    background: #F0F2F2;
+    border: 1px solid #D5D9D9;
+    box-shadow: 0 2px 5px rgba(213,217,217,.5);
+    cursor: pointer;
+}
+
+.cart-item-actions .action-link {
+    color: #007185;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 13px;
+}
+
+.cart-item-actions .action-link:hover {
+    text-decoration: underline;
+}
+
+.action-divider {
+    color: #DDD;
+}
+
+.cart-item-price {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    min-width: 100px;
+}
+
+.cart-subtotal-footer {
+    text-align: right;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.summary-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#cart-summary-subtotal {
+    font-size: 18px;
+}
+
+.gift-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.btn-amazon-primary {
+    background-color: #ffd814;
+    border: 1px solid #fcd200;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #0f1111;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.btn-amazon-primary:hover {
+    background-color: #f7ca00;
+}
+
+.btn-amazon-primary.full-width {
+    width: 100%;
+}
+
+/* Empty state styles */
+.empty-state {
+    padding: 40px;
+    background: white;
+}
+
+.empty-cart-content {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.empty-cart-img {
+    width: 300px;
+    height: auto;
+}
+
+.empty-cart-text h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.empty-cart-text p {
+    margin-bottom: 20px;
+    color: #565959;
+}
+
+.loading-cart {
+    text-align: center;
+    padding: 40px;
+    color: #565959;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .cart-main-container {
+        flex-direction: column;
+    }
+    .cart-right-column {
+        width: 100%;
+        position: static;
+        order: -1; /* Summary becomes visible first on mobile in some layouts, but usually stays below */
+    }
+    .cart-item-image-container {
+        width: 100px;
+        min-width: 100px;
+    }
+    .cart-item {
+        gap: 10px;
+    }
+    .cart-item-price {
+        font-size: 16px;
+    }
+    .empty-cart-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}

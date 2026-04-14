@@ -125,3 +125,14 @@ Si deseas ejecutar todo el empaquetado del software tras instalarlo por primera 
    - **Email:** `admin`
    - **Contraseña:** `1234`
 4. Al entrar accederás a toda la gestión. Puedes pedir a amigos que pasen por la tienda pública y se registren para, a posteriori, usar este usuario `admin` e imponerles rangos o aplicarles suspensiones de 5 minutos al instante para observar su comportamiento.
+
+
+
+CREATE TABLE IF NOT EXISTS carrito (
+    id_usuario INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (id_usuario, id_producto),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE
+);

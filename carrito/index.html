@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style3.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito de compra – Amazon Clone</title>
+
+    <!-- ================= CSS ================= -->
+    <link rel="stylesheet" href="../Style.css" />
+    <link rel="stylesheet" href="./carrito.css" />
+
+    <!-- ================= JS ================= -->
+    <script defer type="module" src="../js/main.js"></script>
+    <script defer type="module" src="../js/carrito-display.js"></script>
 </head>
 
 <body>
@@ -14,43 +21,36 @@
     <!-- ======================== HEADER ========================= -->
     <!-- ========================================================= -->
     <header class="main-header">
-
-        <!-- LOGO -->
-        <a href="../index.html" class="logo nav-hover">
+        <div class="logo nav-hover" onclick="window.location.href='../index.html'">
             <img src="../imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
-        </a>
+        </div>
 
-        <!-- UBICACIÓN -->
         <div class="location nav-hover">
             <span>Enviar a</span>
             <strong>España</strong>
         </div>
 
-        <!-- BUSCADOR -->
         <div class="search-container">
             <select class="search-category">
                 <option>Todos</option>
             </select>
-            <input id="product-search-input" type="text" placeholder="Buscar en Amazon.es" />
-            <button class="search-btn" id="product-search-btn">🔍</button>
+            <input id="cart-search-input" type="text" placeholder="Buscar en Amazon.es" />
+            <button class="search-btn" id="cart-search-btn">🔍</button>
         </div>
         <script>
-            document.getElementById('product-search-btn').addEventListener('click', () => {
-                const q = document.getElementById('product-search-input').value.trim();
+            document.getElementById('cart-search-btn').addEventListener('click', () => {
+                const q = document.getElementById('cart-search-input').value.trim();
                 window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
             });
-            document.getElementById('product-search-input').addEventListener('keypress', (e) => {
+            document.getElementById('cart-search-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    const q = document.getElementById('product-search-input').value.trim();
+                    const q = document.getElementById('cart-search-input').value.trim();
                     window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
                 }
             });
         </script>
 
-        <!-- HERRAMIENTAS DE USUARIO -->
         <div class="nav-tools">
-
-            <!-- IDIOMA -->
             <div class="dropdown nav-hover">
                 <span class="dropbtn">🇪🇸 ES ▾</span>
                 <div class="dropdown-content">
@@ -120,7 +120,7 @@
                     allLinks.forEach(link => {
                         if (link.textContent.includes("Mis pedidos")) {
                             if (savedUser) {
-                                link.href = "../carrito/index.html";
+                                link.href = "./index.html"; // Ya estamos en /carrito/
                             } else {
                                 link.href = "../login.html";
                             }
@@ -129,25 +129,18 @@
                 });
             </script>
 
-            <!-- PEDIDOS -->
             <div class="nav-item nav-hover">
                 <span>Devoluciones</span>
                 <strong>y Pedidos</strong>
             </div>
 
-            <!-- CARRITO -->
-            <a href="../carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
+            <a href="./index.html" class="cart nav-hover active-cart" style="text-decoration: none; color: inherit;">
                 🛒 <strong>Carrito</strong>
                 <span id="cart-count" class="cart-badge">0</span>
             </a>
         </div>
     </header>
 
-    <script defer type="module" src="../js/cart.js"></script>
-
-    <!-- ========================================================= -->
-    <!-- ======================== SUB-NAV ======================== -->
-    <!-- ========================================================= -->
     <nav class="sub-nav">
         <ul>
             <li class="nav-hover"><strong>≡ Todo</strong></li>
@@ -159,123 +152,63 @@
         </ul>
     </nav>
 
-
-
-
-    <!----------MAIN------------>
-    <main class="contenedor-principal">
-
-        <!-- ZONA IZQUIERDA: miniaturas + imagen -->
-        <section class="zona-imagenes">
-            <div class="miniaturas">
-                <img src="./producto/imag/1_.jpg" alt="miniatura 1" class="miniatura activa">
-                <img src="./producto/imag/3_.jpg" alt="miniatura 2" class="miniatura">
-                <img src="./producto/imag/4_.jpg" alt="miniatura 3" class="miniatura">
-                <img src="./producto/imag/5_.jpg" alt="miniatura 4" class="miniatura">
-                <img src="./producto/imag/6_.jpg" alt="miniatura 5" class="miniatura">
-            </div>
-
-            <div class="imagen-grande">
-                <img id="prod-image" src="" alt="Producto principal">
-                <p class="texto-imagen">Haz clic para ver la vista completa</p>
-            </div>
-        </section>
-
-        <!-- ZONA CENTRAL: información -->
-        <section class="zona-info">
-            <p class="ruta">Bebé &gt; Higiene y cuidado &gt; Toallitas húmedas</p>
-
-            <h1 id="prod-title" class="titulo-producto">
-                Cargando producto...
-            </h1>
-
-            <div class="valoracion">
-                <span class="estrellas">★★★★☆</span>
-                <a href="#">4,8</a>
-                <span class="separador">|</span>
-                <a href="#">2860 valoraciones</a>
-            </div>
-
-            <p class="ventas">4 mil+ comprados el mes pasado</p>
-
-            <div class="precio">
-                <div id="prod-promo-badge" class="promo-badge" style="display: none;">-0%</div>
-                <div class="precio-actual">
-                    <span id="prod-price-main" class="simbolo">0.00</span><span class="decimal">€</span>
+    <!-- ========================================================= -->
+    <!-- ===================== CONTENIDO CARRITO ================= -->
+    <!-- ========================================================= -->
+    <main class="cart-main-container">
+        <div class="cart-left-column">
+            <div class="cart-box">
+                <h1 class="cart-title">Carrito</h1>
+                <div class="cart-header-labels">
+                    <span>Precio</span>
                 </div>
-                <div id="prod-original-price" class="precio-original" style="display: none;">0.00 €</div>
-            </div>
+                <hr class="cart-divider">
 
-            <p class="precio-unidad">(0,05 € / unidad)</p>
+                <div id="cart-items-container">
+                    <!-- Los productos se cargarán aquí dinámicamente -->
+                    <div class="loading-cart">Cargando tu carrito...</div>
+                </div>
 
-            <p class="texto-precio">
-                Los precios de los productos vendidos en Amazon incluyen el IVA.
-                Dependiendo de tu dirección de entrega, el IVA puede variar al finalizar la compra.
-            </p>
-
-            <div class="detalles" id="prod-details">
-            </div>
-
-            <div class="sobre-producto" id="prod-desc">
-                <h2>Acerca de este producto</h2>
-                <p>Cargando detalles...</p>
-            </div>
-        </section>
-
-        <!-- ZONA DERECHA: caja de compra -->
-        <aside class="zona-compra">
-            <div class="caja-compra">
-                <p class="precio-lateral">
-                    <span id="prod-price-aside">0.00 €</span>
-                    <span id="prod-original-price-aside"
-                        style="display: none; text-decoration: line-through; color: #565959; font-size: 14px; margin-left: 5px;">0.00
-                        €</span>
-                </p>
-                <p class="entrega">
-                    Entrega GRATIS el viernes, 27 de marzo
-                </p>
-                <p class="stock">En stock</p>
-
-                <label for="cantidad">Cantidad:</label>
-                <select id="cantidad">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-
-                <button class="boton-carrito">Añadir al carrito</button>
-                <button class="boton-comprar">Comprar ya</button>
-
-                <div class="datos-vendedor">
-                    <p><strong>Vendido por:</strong> Amazon</p>
-                    <p><strong>Devolución:</strong> Disponible</p>
-                    <p><strong>Pago:</strong> Transacción segura</p>
+                <div class="cart-subtotal-footer" id="cart-subtotal-bottom">
+                    Subtotal (0 productos): <strong>0,00 €</strong>
                 </div>
             </div>
-        </aside>
 
+            <!-- Estado vacío (oculto por defecto) -->
+            <div id="empty-cart-state" class="cart-box empty-state" style="display: none;">
+                <div class="empty-cart-content">
+                    <img src="../imagenes/empty-cart.png" alt="Carrito vacío" class="empty-cart-img">
+                    <div class="empty-cart-text">
+                        <h2>Tu carrito de Amazon está vacío</h2>
+                        <p>Tus ofertas te están esperando. Cuando añadas artículos a tu carrito, aparecerán aquí.</p>
+                        <a href="../index.html" class="btn-amazon-primary">Continuar comprando</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-right-column">
+            <div class="cart-box summary-box">
+                <div id="cart-summary-subtotal">
+                    Subtotal (0 productos): <strong>0,00 €</strong>
+                </div>
+                <div class="gift-option">
+                    <input type="checkbox" id="is-gift">
+                    <label for="is-gift">Parte del pedido es un regalo</label>
+                </div>
+                <button class="btn-amazon-primary full-width" onclick="window.location.href='#'">Tramitar
+                    pedido</button>
+            </div>
+        </div>
     </main>
-
-    <script src="product.js"></script>
-
-
-
-
-
-
-
 
     <!-- ========================================================= -->
     <!-- ======================== FOOTER ========================= -->
     <!-- ========================================================= -->
     <footer class="footer">
-
         <div class="footer-top">
             <a href="#">Volver arriba</a>
         </div>
-
         <div class="footer-links">
             <div class="column">
                 <h4>Conócenos</h4>
@@ -284,21 +217,18 @@
                 <a href="#">Sostenibilidad</a>
                 <a href="#">Amazon Science</a>
             </div>
-
             <div class="column">
                 <h4>Gana dinero con nosotros</h4>
                 <a href="#">Vender en Amazon</a>
                 <a href="#">Programa de afiliados</a>
                 <a href="#">Logística de Amazon</a>
             </div>
-
             <div class="column">
                 <h4>Métodos de pago Amazon</h4>
                 <a href="#">Métodos de pago</a>
                 <a href="#">Tarjetas regalo</a>
                 <a href="#">Recarga online</a>
             </div>
-
             <div class="column">
                 <h4>¿Necesitas ayuda?</h4>
                 <a href="#">Localizar o gestionar compras</a>
@@ -306,12 +236,11 @@
                 <a href="#">Atención al cliente</a>
             </div>
         </div>
-
         <div class="footer-legal">
             <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
         </div>
-
     </footer>
+
 </body>
 
 </html>

@@ -195,8 +195,9 @@
         <div id="categories-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
             <h2>Gestión de Categorías (Grid Principal)</h2>
             <p style="font-size: 14px; color: #666;">Configura qué categorías aparecen en la Home y su diseño.</p>
-            
-            <form id="categoryForm" style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
+
+            <form id="categoryForm"
+                style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
                 <input type="hidden" id="categoryId">
                 <div class="form-group">
                     <label>Nombre de la Categoría</label>
@@ -233,47 +234,6 @@
             </table>
         </div>
 
-        <!-- GESTIÓN DE CATEGORÍAS (CUADROS DE LA HOME) -->
-        <div id="categories-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
-            <h2>Gestión de Categorías (Grid Principal)</h2>
-            <p style="font-size: 14px; color: #666;">Configura qué categorías aparecen en la Home y su diseño.</p>
-            
-            <form id="categoryForm" style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
-                <input type="hidden" id="categoryId">
-                <div class="form-group">
-                    <label>Nombre de la Categoría</label>
-                    <input type="text" id="cat-nombre" required>
-                </div>
-                <div class="form-group">
-                    <label>Tipo de Diseño (Layout)</label>
-                    <select id="cat-layout">
-                        <option value="grid4">Rejilla de 4 productos</option>
-                        <option value="grid2">Rejilla de 2 productos</option>
-                        <option value="single">Imagen única grande</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Texto del Enlace</label>
-                    <input type="text" id="cat-link" placeholder="Ej: Ver más">
-                </div>
-                <button type="submit" style="background: #007bff;">Guardar Categoría</button>
-                <button type="button" id="cancelCatBtn" style="display:none;">Cancelar</button>
-            </form>
-
-            <table id="categoriesTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Layout</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dinámico -->
-                </tbody>
-            </table>
-        </div>
 
         <!-- Aquí se inyectará dinámicamente el Panel de Usuarios si eres Root -->
         <div id="users-container" style="margin-top: 50px;"></div>

@@ -1,68 +1,86 @@
-let cart = [];
+/**
+ * Lógica global del carrito sincronizada con la base de datos.
+ */
 
-// Esta es la única función que exportamos para main.js
-// Ahora recibe el "game" completo, ¡ya no necesita buscar en localdata!
-export function addToCartLogic(card) {
-  
-  // 1. Buscamos si ya está en la cesta (¡Ojo! es cart.find, no card.find)
-  const existingItem = cart.find((item) => item.id === card.id);
-  const currentQty = existingItem ? existingItem.quantity : 0;
+// Esta es la función principal que se usa desde el grid de productos y la página de producto
+export async function addToCartLogic(card, quantity) {
+  const savedUser = localStorage.getItem("user");
 
-  // 2. Validar stock (Usamos game.stock)
-  if (currentQty + 1 > card.stock) {
-    alert("No hay suficiente stock disponible para este producto.");
+  if (!savedUser) {
+    alert("🛒 Debes identificarte para añadir productos a tu carrito.");
+    // Redirigir a login
+    window.location.href = "../registro/login.html";
     return;
   }
 
-  // 3. Añadir o sumar
-  if (existingItem) {
-    existingItem.quantity++;
-  } else {
-    cart.push({
-      id: card.id,
-      title: card.title,
-      price: card.price, // Si falla el precio, asegúrate de que tu JSON tiene "price"
-      quantity: 1,
+  const user = JSON.parse(savedUser);
+
+  try {
+    // 1. Añadir al carrito en la base de datos
+    console.log(quantity)
+    const res = await fetch(`http://localhost:3000/api/cart/${user.id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id_producto: card.id,
+        cantidad: quantity
+      })
     });
-  }
-  
-  saveCart(); 
-  updateCart();
-}
 
-function removeFromCart(id) {
-  cart = cart.filter((item) => item.id !== id);
-  saveCart();
-  updateCart();
-}
-
-function saveCart() {
-  localStorage.setItem("shoppingCart", JSON.stringify(cart));
-}
-
-function updateCart() {
-    const badge = document.getElementById("cart-count");
-    if (badge) {
-        // En lugar de cart.length (que cuenta juegos únicos),
-        // reduce() sumará la cantidad total de artículos. ¡Pruébalo!
-        badge.textContent = cart.reduce((total, item) => total + item.quantity, 0);
-    }
-}
-
-function loadCart() {
-  const savedCart = localStorage.getItem("shoppingCart");
-  if (savedCart) {
-    try {
-      cart = JSON.parse(savedCart);
+    if (res.ok) {
+      console.log("Producto añadido a la BD");
+      // 2. Actualizar el contador visual (badge)
       updateCart();
-    } catch (e) {
-      console.error("Error parseando el carrito", e);
-      cart = [];
+
+      // Opcional: Feedback visual de que se añadió
+      const btn = document.querySelector(`button[onclick="addCart(${card.id})"]`);
+      if (btn) {
+        const originalText = btn.textContent;
+        btn.textContent = "✅ Añadido";
+        btn.style.backgroundColor = "#7cfc00";
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.backgroundColor = "";
+        }, 2000);
+      }
+    } else {
+      const err = await res.json();
+      alert("Error al añadir al carrito: " + (err.error || "Error desconocido"));
     }
+  } catch (e) {
+    console.error("Error de conexión al añadir al carrito", e);
   }
 }
 
-// Cargamos el carrito al iniciar este archivo
-loadCart();
+// Función para actualizar el contador del carrito en el header
+export async function updateCart() {
+  const badge = document.getElementById("cart-count");
+  if (!badge) return;
 
+  const savedUser = localStorage.getItem("user");
+  if (!savedUser) {
+    badge.textContent = "0";
+    return;
+  }
 
+  try {
+    const user = JSON.parse(savedUser);
+    const res = await fetch(`http://localhost:3000/api/cart/${user.id}`);
+    if (res.ok) {
+      const cartItems = await res.json();
+      const totalQty = cartItems.reduce((total, item) => total + item.quantity, 0);
+      badge.textContent = totalQty;
+    }
+  } catch (e) {
+    console.error("Error al actualizar el contador del carrito", e);
+  }
+}
+
+// Inicialización
+document.addEventListener("DOMContentLoaded", () => {
+  updateCart();
+});
+
+// Exponer globalmente para que otros scripts no modulares puedan usarlo
+window.updateCartBadge = updateCart;
+window.addToCart = addToCartLogic;

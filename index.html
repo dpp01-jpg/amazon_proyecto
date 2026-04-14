@@ -57,40 +57,83 @@
             </div>
 
             <!-- CUENTA -->
-            <div class="nav-item nav-hover">
-                <span id="nav-user-greeting">Hola, identifícate</span>
-                <strong>Cuenta y listas</strong>
+            <div class="dropdown nav-hover">
+                <div class="nav-item">
+                    <span id="nav-user-greeting">Hola, identifícate</span>
+                    <strong>Cuenta y listas ▾</strong>
+                </div>
+                <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
+                    style="min-width: 200px; right: 0; left: auto; padding: 10px;">
+                    <a href="./registro/login.html" id="login-link"
+                        style="background-color: #ffd814; border: 1px solid #a88734; border-radius: 3px; text-align: center; margin-bottom: 10px; font-weight: bold; color: #111;">Identifícate</a>
+                    <div id="user-only-actions" style="display: none; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="font-size: 13px; color: #111; margin-bottom: 5px;">Tu cuenta</p>
+                        <a href="#">Mis pedidos</a>
+                        <a href="#" onclick="logoutUser()" style="color: #007185;">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
+
             <script>
+                function logoutUser() {
+                    if (confirm("¿Estás seguro de que quieres cerrar tu sesión?")) {
+                        localStorage.removeItem("user");
+                        window.location.reload();
+                    }
+                }
+
                 document.addEventListener("DOMContentLoaded", async () => {
                     const userGreeting = document.getElementById("nav-user-greeting");
+                    const loginLink = document.getElementById("login-link");
+                    const userActions = document.getElementById("user-only-actions");
                     const savedUser = localStorage.getItem("user");
+
                     if (savedUser) {
                         try {
                             const user = JSON.parse(savedUser);
 
-                            // Verificar en la BD si actualmente está baneado
+                            // 1. Mostrar nombre
+                            if (user && user.nombre) {
+                                userGreeting.textContent = "Hola, " + user.nombre;
+                            }
+
+                            // 2. Ajustar menú
+                            if (loginLink) loginLink.style.display = "none";
+                            if (userActions) userActions.style.display = "block";
+
+                            // 3. Patrulla de seguridad
                             const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
                             if (res.ok) {
                                 const status = await res.json();
                                 if (status.isBanned) {
-                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}\nHasta: ${new Date(status.until).toLocaleString()}`);
+                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}`);
                                     localStorage.removeItem("user");
                                     window.location.reload();
-                                    return;
                                 }
-                            }
-
-                            if (user && user.nombre) {
-                                userGreeting.textContent = "Hola, " + user.nombre;
                             }
                         } catch (e) {
                             console.error("Error al leer usuario", e);
                         }
                     }
+
+                    // Lógica para el enlace inteligente de "Mis pedidos"
+                    const allLinks = document.querySelectorAll('.logout-dropdown a');
+                    allLinks.forEach(link => {
+                        if (link.textContent.includes("Mis pedidos")) {
+                            if (savedUser) {
+                                link.href = "./carrito/index.html";
+                            } else {
+                                link.href = "./registro/login.html";
+                            }
+                        }
+                    });
+
+                    if (!savedUser) {
+                        const loginUrl = './registro/login.html';
+                        if (loginLink) loginLink.href = loginUrl;
+                    }
                 });
             </script>
-
             <!-- PEDIDOS -->
             <div class="nav-item nav-hover">
                 <span>Devoluciones</span>
@@ -98,10 +141,10 @@
             </div>
 
             <!-- CARRITO -->
-            <div class="cart nav-hover">
-                🛒 <strong>Cesta</strong>
+            <a href="./carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
+                🛒 <strong>Carrito</strong>
                 <span id="cart-count" class="cart-badge">0</span>
-            </div>
+            </a>
         </div>
     </header>
 
@@ -144,9 +187,11 @@
             <!-- Contenido dinámico desde js/home-grid.js -->
         </div>
 
-        <div class="zona-datos-js" id="zona-datos-js"></div>
-
     </main>
+
+    <!-- Zona de resultados de búsqueda (fuera del grid del carrusel) -->
+    <section id="zona-datos-js" style="display:none;"></section>
+
     <!-- ========================================================= -->
     <!-- ======================== FOOTER ========================= -->
     <!-- ========================================================= -->

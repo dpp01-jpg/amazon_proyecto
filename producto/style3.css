@@ -340,7 +340,28 @@ main{
 }
 
 .precio {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     margin-bottom: 4px;
+}
+
+.promo-badge {
+    background-color: #CC0C39;
+    color: white;
+    padding: 2px 6px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 2px;
+    display: inline-block;
+    width: fit-content;
+    margin-bottom: 5px;
+}
+
+.precio-actual {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
 }
 
 .simbolo {
@@ -352,6 +373,12 @@ main{
 .decimal {
     font-size: 22px;
     color: #111111;
+}
+
+.precio-original {
+    color: #565959;
+    font-size: 14px;
+    text-decoration: line-through;
 }
 
 .precio-unidad {
@@ -445,7 +472,7 @@ main{
     margin-bottom: 15px;
 }
 
-.boton-cesta,
+.boton-carrito,
 .boton-comprar {
     width: 100%;
     border: none;
@@ -456,7 +483,7 @@ main{
     margin-bottom: 10px;
 }
 
-.boton-cesta {
+.boton-carrito {
     background-color: #ffd814;
 }
 
@@ -464,7 +491,7 @@ main{
     background-color: #ffa41c;
 }
 
-.boton-cesta:hover {
+.boton-carrito:hover {
     background-color: #f7ca00;
 }
 

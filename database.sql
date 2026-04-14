@@ -25,6 +25,15 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre VARCHAR(100)
 );
 
+CREATE TABLE IF NOT EXISTS carrito (
+    id_usuario INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (id_usuario, id_producto),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE
+);
+
 -- Insertar algunas categorías de prueba
 INSERT INTO categorias (nombre) VALUES ('Oferta Top'), ('Informática'), ('Electrónica');
 
