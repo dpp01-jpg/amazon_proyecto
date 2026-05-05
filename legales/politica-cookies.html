@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Cookies - Amazon Clone</title>
+    <link rel="stylesheet" href="../Style.css">
+    <style>
+        .legal-content { max-width: 800px; margin: 40px auto; padding: 20px; font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: white; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .legal-content h1 { color: #111; border-bottom: 2px solid #f3a847; padding-bottom: 10px; }
+        .legal-content h2 { margin-top: 30px; color: #232f3e; }
+    </style>
+</head>
+<body style="background-color: #eaeded;">
+    <header class="main-header" style="justify-content: center;">
+        <a href="../index.html" class="logo" style="margin: 0 auto; display: block; text-align: center;">
+            <img src="../imagenes/amazon_PNG11.png" alt="Logo" style="width: 100px;">
+        </a>
+    </header>
+    
+    <main class="legal-content">
+        <h1>Política de Cookies</h1>
+        <p><strong>Última actualización:</strong> Mayo 2026</p>
+        
+        <h2>1. ¿Qué son las cookies?</h2>
+        <p>Una cookie es un fichero que se descarga en su ordenador o dispositivo al acceder a determinadas páginas web. Las cookies permiten a una página web, entre otras cosas, almacenar y recuperar información sobre los hábitos de navegación de un usuario o de su equipo.</p>
+
+        <h2>2. Tipos de cookies que utiliza esta web</h2>
+        <ul>
+            <li><strong>Cookies técnicas (Necesarias):</strong> Son aquellas que permiten al usuario la navegación a través de la página web y la utilización de las diferentes opciones (ej: sesión de usuario en localStorage/sessionStorage, carrito de compras). <em>No pueden ser desactivadas</em>.</li>
+            <li><strong>Cookies de análisis:</strong> Permiten el seguimiento y análisis del comportamiento de los usuarios (simuladas en este proyecto).</li>
+        </ul>
+
+        <h2>3. Gestión de las Cookies</h2>
+        <p>Puede usted permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las opciones del navegador instalado en su ordenador:</p>
+        <ul>
+            <li>Chrome</li>
+            <li>Firefox</li>
+            <li>Safari</li>
+            <li>Edge</li>
+        </ul>
+        <p>También puede cambiar su preferencia en nuestro sitio haciendo clic en el siguiente botón:</p>
+        <button onclick="localStorage.removeItem('cookieConsent'); alert('Preferencias borradas. El banner volverá a aparecer al recargar.'); window.location.reload();" style="background-color: #eaeded; color: #111; border: 1px solid #a6a6a6; padding: 8px 15px; border-radius: 3px; cursor: pointer; margin-top: 10px;">Revocar consentimiento de cookies</button>
+        
+        <p style="margin-top: 40px;"><a href="../index.html" style="color: #007185;">Volver a la tienda</a></p>
+    </main>
+</body>
+</html>

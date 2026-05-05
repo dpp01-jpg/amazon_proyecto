@@ -67,11 +67,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         product.final_price = finalPrice;
 
 
+        // ====== Renderizar Descripción con Formateo Inteligente (NUEVO) ======
         if (product.description && product.description !== 'null') {
-            document.getElementById('prod-desc').innerHTML = `
-                <h2>Acerca de este producto</h2>
-                <p>${product.description}</p>
-            `;
+            let desc = product.description;
+            
+            // EXPRESIÓN REGULAR: Dividir por guiones, puntos seguidos de mayúscula o saltos de línea
+            const caracteristicas = desc.split(/(?:\s*-\s*|\.\s+(?=[A-Z])|\n)/);
+            
+            let descHTML = '<h2>Acerca de este producto</h2><ul>';
+            caracteristicas.forEach(item => {
+                const text = item.trim();
+                if (text.length > 5) {
+                    descHTML += `<li>${text}</li>`;
+                }
+            });
+            descHTML += '</ul>';
+            document.getElementById('prod-desc').innerHTML = descHTML;
         } else {
             document.getElementById('prod-desc').innerHTML = `
                 <h2>Acerca de este producto</h2>
@@ -79,26 +90,38 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }
 
-        // ====== Renderizar Detalles Técnicos (NUEVO) ======
+        // ====== Renderizar Detalles Técnicos con Regex (NUEVO) ======
         const detailsContainer = document.getElementById('prod-details');
         if (product.detalles && product.detalles !== 'null' && product.detalles.trim() !== '') {
-            let detailsHTML = '';
-            // Dividir el texto del campo detalles por salto de línea
-            const lineas = product.detalles.split('\\n');
+            let rawDetails = product.detalles.replace(/\\n/g, '\n');
+
+            // Regex para insertar dos puntos si faltan en palabras clave conocidas
+            const keys = ["Marca", "Tipo de instalación", "Dimensiones", "Capacidad", "Función especial", "Color", "Material", "Nivel de ruido", "Componentes incluidos"];
+            keys.forEach(key => {
+                const regex = new RegExp(`(${key})(?!:)\\s+`, 'g');
+                rawDetails = rawDetails.replace(regex, `$1: `);
+            });
+
+            const lineas = rawDetails.split('\n');
+            let detailsHTML = '<div class="specs-container" style="display: flex; flex-direction: column; gap: 8px;">';
+            
             lineas.forEach(linea => {
                 if (linea.trim() === '') return;
-
-                // Si la línea dice "Marca: Sony", partir en Clave/Valor
+                
                 const separador = linea.indexOf(':');
                 if (separador !== -1) {
                     const clave = linea.substring(0, separador).trim();
                     const valor = linea.substring(separador + 1).trim();
-                    detailsHTML += `<p><strong>${clave}:</strong> ${valor}</p>`;
+                    detailsHTML += `
+                        <div style="display: grid; grid-template-columns: 150px 1fr; border-bottom: 1px solid #eee; padding: 4px 0;">
+                            <span style="color: #565959; font-weight: bold;">${clave}</span>
+                            <span>${valor}</span>
+                        </div>`;
                 } else {
-                    // Si no tiene 2 puntos, pintar normal
-                    detailsHTML += `<p>${linea}</p>`;
+                    detailsHTML += `<p style="margin: 4px 0;">${linea}</p>`;
                 }
             });
+            detailsHTML += '</div>';
             detailsContainer.innerHTML = detailsHTML;
         }
 

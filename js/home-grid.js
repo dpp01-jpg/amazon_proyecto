@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 `;
                 }).join('')}
                         </div>
-                        <a href="categorias.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
+                        <a href="categoria/category.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
                     </div>
                 `;
             } else if (cat.layout_type === 'grid2') {
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 </a>
                             `).join('')}
                         </div>
-                        <a href="categorias.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
+                        <a href="categoria/category.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
                     </div>
                 `;
             } else {
@@ -83,10 +83,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 categoryHtml = `
                     <div class="cuadro-alumno">
                         <h3>${cat.nombre}</h3>
-                        <a href="categorias.html?id=${cat.id}" class="imagen-una-sola">
+                        <a href="categoria/category.html?id=${cat.id}" class="imagen-una-sola">
                             <img src="${cat.products[0]?.image || ''}" alt="${cat.nombre}">
                         </a>
-                        <a href="categorias.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
+                        <a href="categoria/category.html?id=${cat.id}" class="enlace-cuadro">${linkText}</a>
                     </div>
                 `;
             }

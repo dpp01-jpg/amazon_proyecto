@@ -8,22 +8,91 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background: #f4f4f4;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #232f3e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 22px;
+            color: #f0c14b;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #3a4a5e;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            background: #131a22;
+            border-left: 4px solid #f0c14b;
+        }
+
+        .logout-btn-sidebar {
+            margin-top: auto;
+            padding: 15px;
+            background: #d9534f;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .logout-btn-sidebar:hover {
+            background: #c9302c;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: auto;
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            text-align: center;
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        h1, h2 {
             color: #333;
+            margin-top: 0;
         }
 
         .form-group {
@@ -42,12 +111,14 @@
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
         button {
-            background: #ff9900;
-            color: white;
-            border: none;
+            background: #f0c14b;
+            color: #111;
+            border: 1px solid #a88734;
             padding: 10px 15px;
             cursor: pointer;
             border-radius: 4px;
@@ -87,6 +158,7 @@
             border: none;
             border-radius: 3px;
             color: white;
+            font-weight: normal;
         }
 
         .edit-btn {
@@ -95,6 +167,13 @@
 
         .delete-btn {
             background: #f44336;
+        }
+        
+        /* Ocultar inicialmente el panel y mostrarlo después del login */
+        #admin-app {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -123,156 +202,200 @@
         </div>
     </div>
 
-    <!-- MAIN ADMIN PANEL (Hidden by default by the overlay) -->
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1 style="margin: 0;">Gestión de Productos (Back Office)</h1>
-            <button onclick="logoutAdmin()" style="background: #d9534f;">Cerrar Sesión</button>
+    <!-- MAIN ADMIN APP -->
+    <div id="admin-app">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h2>Admin Panel</h2>
+            <ul class="sidebar-menu">
+                <li id="menu-products" class="active" onclick="showSection('products')">📦 Productos</li>
+                <li id="menu-categories" onclick="showSection('categories')">📁 Categorías</li>
+                <li id="menu-banners" onclick="showSection('banners')">🖼️ Banners</li>
+                <li id="menu-users" style="display: none;" onclick="showSection('users')">👥 Usuarios</li>
+            </ul>
+            <div class="logout-btn-sidebar" onclick="logoutAdmin()">Cerrar Sesión</div>
         </div>
 
-        <form id="productForm">
-            <input type="hidden" id="productId">
-            <div class="form-group">
-                <label>Título</label>
-                <input type="text" id="title" required>
-            </div>
-            <div class="form-group">
-                <label>Precio (€)</label>
-                <input type="number" step="0.01" id="price" required>
-            </div>
-            <div class="form-group">
-                <label>URL Imagen</label>
-                <input type="text" id="image" required>
-            </div>
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea id="description"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Detalles Técnicos</label>
-                <textarea id="detalles"
-                    placeholder="Introduce datos (uno por línea), Ej:&#10;Marca: Amazon&#10;Peso: 2kg"
-                    rows="4"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Categoría</label>
-                <select id="id_categoria">
-                    <!-- Dinámico desde JS -->
-                </select>
-            </div>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container">
 
-            <!-- NUEVOS CAMPOS DE PROMOCIÓN -->
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>% Descuento (opcional)</label>
-                    <input type="number" id="promo_percent" placeholder="Ej: 35">
+                <!-- SECTION: PRODUCTOS -->
+                <div id="products-section" class="admin-section active">
+                    <h1>Gestión de Productos</h1>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Añade, edita o elimina productos del catálogo.</p>
+
+                    <form id="productForm" style="background: #fdfdfd; padding: 20px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 30px;">
+                        <input type="hidden" id="productId">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="title" required>
+                        </div>
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Precio (€)</label>
+                                <input type="number" step="0.01" id="price" required>
+                            </div>
+                            <div class="form-group" style="flex: 2;">
+                                <label>URL Imagen</label>
+                                <input type="text" id="image" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Detalles Técnicos</label>
+                            <textarea id="detalles"
+                                placeholder="Introduce datos (uno por línea), Ej:&#10;Marca: Amazon&#10;Peso: 2kg"
+                                rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="id_categoria">
+                                <!-- Dinámico desde JS -->
+                            </select>
+                        </div>
+
+                        <!-- NUEVOS CAMPOS DE PROMOCIÓN -->
+                        <div style="display: flex; gap: 15px; margin-bottom: 15px; background: #fff5e6; padding: 15px; border-radius: 4px; border: 1px solid #ffe0b2;">
+                            <div class="form-group" style="flex: 1; margin: 0;">
+                                <label>% Descuento (opcional)</label>
+                                <input type="number" id="promo_percent" placeholder="Ej: 35">
+                            </div>
+                            <div class="form-group" style="flex: 2; margin: 0;">
+                                <label>Texto Oferta (opcional)</label>
+                                <input type="text" id="promo_text" placeholder="Ej: Oferta flash">
+                            </div>
+                        </div>
+                        <button type="submit" id="submitBtn">Añadir Producto</button>
+                        <button type="button" id="cancelBtn" style="display:none; background:#888; color: white; border-color: #666;">Cancelar</button>
+                    </form>
+
+                    <h2>Lista de Productos</h2>
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Cargados dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
-                <div class="form-group" style="flex: 2;">
-                    <label>Texto Oferta (opcional)</label>
-                    <input type="text" id="promo_text" placeholder="Ej: Oferta flash">
+
+                <!-- SECTION: CATEGORÍAS -->
+                <div id="categories-section" class="admin-section">
+                    <h1>Gestión de Categorías</h1>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Configura qué categorías aparecen en la Home y su diseño (Grid Principal).</p>
+
+                    <form id="categoryForm"
+                        style="background: #fdfdfd; padding: 20px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 30px;">
+                        <input type="hidden" id="categoryId">
+                        <div class="form-group">
+                            <label>Nombre de la Categoría</label>
+                            <input type="text" id="cat-nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Diseño (Layout)</label>
+                            <select id="cat-layout">
+                                <option value="grid4">Rejilla de 4 productos</option>
+                                <option value="grid2">Rejilla de 2 productos</option>
+                                <option value="single">Imagen única grande</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Texto del Enlace</label>
+                            <input type="text" id="cat-link" placeholder="Ej: Ver más">
+                        </div>
+                        <button type="submit" style="background: #007bff; color: white; border-color: #0056b3;">Guardar Categoría</button>
+                        <button type="button" id="cancelCatBtn" style="display:none; background:#888; color: white; border-color: #666;">Cancelar</button>
+                    </form>
+
+                    <table id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Layout</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
                 </div>
+
+                <!-- SECTION: BANNERS -->
+                <div id="banners-section" class="admin-section">
+                    <h1>Gestión de Banners</h1>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Añade o elimina imágenes del carrusel principal.</p>
+
+                    <form id="bannerForm"
+                        style="background: #fdfdfd; padding: 20px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label>URL de la Imagen</label>
+                            <input type="text" id="banner-image" placeholder="Ej: imagenes/img/imagen_3.jpg" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Texto Alt / Descripción</label>
+                            <input type="text" id="banner-alt" placeholder="Ej: Nueva Colección">
+                        </div>
+                        <button type="submit" style="background: #28a745; color: white; border-color: #1e7e34;">Añadir Banner</button>
+                    </form>
+
+                    <table id="bannersTable">
+                        <thead>
+                            <tr>
+                                <th>Miniatura</th>
+                                <th>Ruta / Alt</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION: USUARIOS -->
+                <div id="users-section" class="admin-section">
+                    <!-- Aquí se inyectará dinámicamente el Panel de Usuarios si eres Root -->
+                    <div id="users-container"></div>
+                </div>
+
             </div>
-            <button type="submit" id="submitBtn">Añadir Producto</button>
-            <button type="button" id="cancelBtn" style="display:none; background:#888;">Cancelar</button>
-        </form>
-
-        <h2>Lista de Productos</h2>
-        <table id="productsTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Precio</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Cargados dinámicamente -->
-            </tbody>
-        </table>
-
-        <!-- GESTIÓN DE CATEGORÍAS (CUADROS DE LA HOME) -->
-        <div id="categories-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
-            <h2>Gestión de Categorías (Grid Principal)</h2>
-            <p style="font-size: 14px; color: #666;">Configura qué categorías aparecen en la Home y su diseño.</p>
-
-            <form id="categoryForm"
-                style="background: #fdfdfd; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
-                <input type="hidden" id="categoryId">
-                <div class="form-group">
-                    <label>Nombre de la Categoría</label>
-                    <input type="text" id="cat-nombre" required>
-                </div>
-                <div class="form-group">
-                    <label>Tipo de Diseño (Layout)</label>
-                    <select id="cat-layout">
-                        <option value="grid4">Rejilla de 4 productos</option>
-                        <option value="grid2">Rejilla de 2 productos</option>
-                        <option value="single">Imagen única grande</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Texto del Enlace</label>
-                    <input type="text" id="cat-link" placeholder="Ej: Ver más">
-                </div>
-                <button type="submit" style="background: #007bff;">Guardar Categoría</button>
-                <button type="button" id="cancelCatBtn" style="display:none;">Cancelar</button>
-            </form>
-
-            <table id="categoriesTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Layout</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dinámico -->
-                </tbody>
-            </table>
-        </div>
-
-
-        <!-- Aquí se inyectará dinámicamente el Panel de Usuarios si eres Root -->
-        <div id="users-container" style="margin-top: 50px;"></div>
-
-        <!-- GESTIÓN DE BANNERS (CARRUSEL) -->
-        <div id="banners-container" style="margin-top: 50px; border-top: 2px solid #ccc; padding-top: 20px;">
-            <h2>Gestión de Banners (Carrusel)</h2>
-            <p style="font-size: 14px; color: #666;">Añade o elimina imágenes del carrusel principal. (Accesible por
-                Root y Staff)</p>
-
-            <form id="bannerForm"
-                style="background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px;">
-                <div class="form-group">
-                    <label>URL de la Imagen</label>
-                    <input type="text" id="banner-image" placeholder="Ej: imagenes/img/imagen_3.jpg" required>
-                </div>
-                <div class="form-group">
-                    <label>Texto Alt / Descripción</label>
-                    <input type="text" id="banner-alt" placeholder="Ej: Nueva Colección">
-                </div>
-                <button type="submit" style="background: #28a745;">Añadir Banner</button>
-            </form>
-
-            <table id="bannersTable">
-                <thead>
-                    <tr>
-                        <th>Miniatura</th>
-                        <th>Ruta / Alt</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dinámico -->
-                </tbody>
-            </table>
         </div>
     </div>
 
     <script src="./admin.js"></script>
+    <script>
+        // Lógica simple para cambiar de pestañas en el panel de admin
+        window.showSection = function(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.admin-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Quitar clase activa de los items del menú
+            document.querySelectorAll('.sidebar-menu li').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId + '-section').classList.add('active');
+            
+            // Añadir clase activa al item del menú clickeado
+            const menuItem = document.getElementById('menu-' + sectionId);
+            if(menuItem) menuItem.classList.add('active');
+        }
+    </script>
 </body>
 
 </html>

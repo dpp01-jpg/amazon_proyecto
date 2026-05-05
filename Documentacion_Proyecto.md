@@ -136,3 +136,16 @@ CREATE TABLE IF NOT EXISTS carrito (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE
 );
+
+
+Nodemailer -- Libreria Backend -- envio de correos
+Smtp -- envio de correos   
+
+-Exportar Base de Datos
+C:\xampp\mysql\bin\mysqldump.exe -u hr -p1234 amazon_db --result-file="amazon_db_export.sql"
+
+
+Dependencias para el Frontend
+npm install --save axios bcryptjs json-server
+
+npm install --save express cors mysql2 bcryptjs nodemailer crypto

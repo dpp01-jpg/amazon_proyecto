@@ -2,51 +2,84 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Configurar Nodemailer con Ethereal (para pruebas)
+let transporter;
+nodemailer.createTestAccount((err, account) => {
+    if (err) {
+        console.error('Failed to create a testing account. ' + err.message);
+        return;
+    }
+    transporter = nodemailer.createTransport({
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
+        auth: {
+            user: account.user,
+            pass: account.pass
+        }
+    });
+    console.log("Servidor de correo Ethereal listo.");
+});
+
 // ========================
 // ENDPOINTS PRODUCTOS
 // ========================
 
-// GET a todos los productos (con búsqueda opcional y paginación)
+// GET a todos los productos (con búsqueda opcional, filtros y paginación)
 app.get('/api/products', async (req, res) => {
     try {
-        let query = 'SELECT * FROM productos';
+        let query = 'SELECT * FROM productos WHERE 1=1';
         const queryParams = [];
 
-        // Búsqueda
+        // Búsqueda por texto
         if (req.query.search) {
-            query += ' WHERE title LIKE ? OR description LIKE ?';
+            query += ' AND (title LIKE ? OR description LIKE ?)';
             const searchTerm = `%${req.query.search}%`;
             queryParams.push(searchTerm, searchTerm);
         }
 
+        // Filtro por categoría
+        if (req.query.category) {
+            query += ' AND id_categoria = ?';
+            queryParams.push(req.query.category);
+        }
+
+        // Filtro por precio mínimo
+        if (req.query.minPrice) {
+            query += ' AND price >= ?';
+            queryParams.push(parseFloat(req.query.minPrice));
+        }
+
+        // Filtro por precio máximo
+        if (req.query.maxPrice) {
+            query += ' AND price <= ?';
+            queryParams.push(parseFloat(req.query.maxPrice));
+        }
+
         // Paginación (ejemplo básico)
+        let paginatedQuery = query;
         if (req.query.page && req.query.limit) {
             const limit = parseInt(req.query.limit);
             const offset = (parseInt(req.query.page) - 1) * limit;
-            query += ' LIMIT ? OFFSET ?';
+            paginatedQuery += ' LIMIT ? OFFSET ?';
             queryParams.push(limit, offset);
         }
 
-        const [rows] = await db.query(query, queryParams);
-
-        // Formatear image paths si es necesario
-        // Pero en este caso, se asume que image tiene la ruta correcta.
+        const [rows] = await db.query(paginatedQuery, queryParams);
 
         // Obtener el count total si hay paginación
         let total = rows.length;
         if (req.query.page && req.query.limit) {
-            let countQuery = 'SELECT COUNT(*) as count FROM productos';
-            let countParams = [];
-            if (req.query.search) {
-                countQuery += ' WHERE title LIKE ? OR description LIKE ?';
-                const searchTerm = `%${req.query.search}%`;
-                countParams.push(searchTerm, searchTerm);
-            }
+            let countQuery = query.replace('SELECT *', 'SELECT COUNT(*) as count');
+            const countParams = queryParams.slice(0, queryParams.length - 2); // Quitar limit y offset
             const [countRows] = await db.query(countQuery, countParams);
             total = countRows[0].count;
 
@@ -140,15 +173,49 @@ app.delete('/api/products/:id', async (req, res) => {
 // ENDPOINTS USUARIOS
 // ========================
 
-// POST Registro básico (simulado, sin encriptación avanzada por simplicidad académica a menos que se pida)
+// POST Registro básico con envío de correo
 app.post('/api/register', async (req, res) => {
     try {
         const { email, password, nombre } = req.body;
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+
+        // Encriptar la contraseña antes de guardarla
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         const [result] = await db.query(
-            'INSERT INTO usuarios (email, password, nombre) VALUES (?, ?, ?)',
-            [email, password, nombre]
+            'INSERT INTO usuarios (email, password, nombre, verification_token) VALUES (?, ?, ?, ?)',
+            [email, hashedPassword, nombre, verificationToken]
         );
-        res.status(201).json({ message: 'Usuario registrado con éxito', id: result.insertId, email, nombre });
+
+        // Enviar correo
+        const verificationUrl = `http://localhost:3000/api/verify-email?token=${verificationToken}`;
+        
+        console.log("\n==============================================");
+        console.log("NUEVO USUARIO REGISTRADO:", email);
+        console.log("🔗 ENLACE DE VERIFICACIÓN (Púlsalo con Ctrl+Clic):");
+        console.log(verificationUrl);
+        console.log("==============================================\n");
+
+        if (transporter) {
+            try {
+                const info = await transporter.sendMail({
+                    from: '"Amazon Clone" <no-reply@amazonclone.local>',
+                    to: email,
+                    subject: "Verifica tu correo electrónico - Amazon Clone",
+                    html: `<p>Hola ${nombre},</p>
+                           <p>Gracias por registrarte. Por favor, haz clic en el siguiente enlace para verificar tu correo:</p>
+                           <a href="${verificationUrl}">${verificationUrl}</a>`
+                });
+                console.log("👀 VISTA PREVIA DEL CORREO ETHEREAL:", nodemailer.getTestMessageUrl(info));
+                console.log("==============================================\n");
+            } catch (mailErr) {
+                console.error("Error enviando el correo:", mailErr.message);
+            }
+        } else {
+            console.log("⚠️ Ethereal Mail no está disponible. Usa el enlace directo de arriba para verificar.");
+        }
+
+        res.status(201).json({ message: 'Usuario registrado. Revisa tu consola o correo.', id: result.insertId, email, nombre });
     } catch (err) {
         console.error(err);
         if (err.code === 'ER_DUP_ENTRY') {
@@ -158,17 +225,105 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// GET Verificar email
+app.get('/api/verify-email', async (req, res) => {
+    try {
+        const { token } = req.query;
+        if (!token) return res.status(400).send("Falta el token de verificación.");
+
+        const [rows] = await db.query('SELECT id FROM usuarios WHERE verification_token = ?', [token]);
+        if (rows.length === 0) {
+            return res.status(400).send("Token inválido o expirado.");
+        }
+
+        await db.query('UPDATE usuarios SET is_verified = TRUE, verification_token = NULL WHERE id = ?', [rows[0].id]);
+        
+        // Página web simple de éxito
+        res.send(`
+            <div style="text-align: center; font-family: Arial; padding-top: 50px;">
+                <h1 style="color: #007185;">¡Correo verificado con éxito!</h1>
+                <p>Ya puedes iniciar sesión en Amazon Clone.</p>
+                <a href="http://127.0.0.1:5500/registro/login.html" style="background:#f0c14b; padding:10px 20px; text-decoration:none; color:black; border-radius:4px; font-weight:bold; display:inline-block; margin-top:20px;">Ir al Login</a>
+            </div>
+        `);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error interno del servidor al verificar el correo.");
+    }
+});
+
+// POST Reenviar correo de verificación
+app.post('/api/resend-verification', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const [rows] = await db.query('SELECT id, is_verified, verification_token FROM usuarios WHERE email = ?', [email]);
+        
+        if (rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado.' });
+        if (rows[0].is_verified) return res.status(400).json({ error: 'El usuario ya está verificado.' });
+
+        let verificationToken = rows[0].verification_token;
+        // Si por algún motivo no tenía token, le generamos uno
+        if (!verificationToken) {
+            verificationToken = crypto.randomBytes(32).toString('hex');
+            await db.query('UPDATE usuarios SET verification_token = ? WHERE id = ?', [verificationToken, rows[0].id]);
+        }
+
+        const verificationUrl = `http://localhost:3000/api/verify-email?token=${verificationToken}`;
+        console.log("\n==============================================");
+        console.log("🔄 REENVÍO DE CORREO SOLICITADO PARA:", email);
+        console.log("🔗 ENLACE DE VERIFICACIÓN (Púlsalo con Ctrl+Clic):");
+        console.log(verificationUrl);
+        console.log("==============================================\n");
+
+        if (transporter) {
+            transporter.sendMail({
+                from: '"Amazon Clone" <no-reply@amazonclone.local>',
+                to: email,
+                subject: "Reenvío: Verifica tu correo electrónico",
+                html: `<p>Has solicitado un reenvío del enlace de verificación.</p>
+                       <a href="${verificationUrl}">${verificationUrl}</a>`
+            }).catch(console.error);
+        }
+
+        res.json({ message: 'Enlace reenviado. Revisa tu consola o tu correo.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al reenviar la verificación.' });
+    }
+});
+
 // POST Login
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ? AND password = ?', [email, password]);
+        // Buscar primero solo por email
+        const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
 
         if (rows.length === 0) {
             return res.status(401).json({ error: 'Credenciales inválidas' });
         }
 
-        const user = rows[0];
+        let user = rows[0];
+        
+        // Comparar la contraseña encriptada
+        let isMatch = await bcrypt.compare(password, user.password);
+
+        // Sistema de auto-migración: si la contraseña en texto plano coincide (usuarios antiguos), la encriptamos y la guardamos
+        if (!isMatch && password === user.password) {
+            isMatch = true;
+            const newHashed = await bcrypt.hash(password, 10);
+            await db.query('UPDATE usuarios SET password = ? WHERE id = ?', [newHashed, user.id]);
+            user.password = newHashed; // Actualizar el objeto local
+        }
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Credenciales inválidas' });
+        }
+
+        // Verificar si su correo está validado (ignorando al admin por defecto si existiera)
+        if (!user.is_verified && user.rol !== 'admin') {
+             return res.status(403).json({ error: 'Por favor, verifica tu correo electrónico antes de iniciar sesión. Busca el enlace en tu bandeja de entrada o consola.' });
+        }
 
         // Verificar si está baneado
         if (user.ban_until && new Date(user.ban_until) > new Date()) {
