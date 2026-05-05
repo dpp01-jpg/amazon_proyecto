@@ -97,7 +97,9 @@
                         try {
                             const user = JSON.parse(savedUser);
                             if (user && user.nombre) {
-                                userGreeting.textContent = "Hola, " + user.nombre;
+                                const currentLang = localStorage.getItem('app_lang') || 'es';
+                                const prefixes = { es: 'Hola, ', en: 'Hello, ', pt: 'Olá, ' };
+                                userGreeting.textContent = (prefixes[currentLang] || 'Hola, ') + user.nombre;
                             }
                             if (loginLink) loginLink.style.display = "none";
                             if (userActions) userActions.style.display = "block";

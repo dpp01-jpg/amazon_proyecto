@@ -58,6 +58,22 @@ function changeLanguage(lang) {
             if (el.tagName === 'INPUT' && el.type === 'text') {
                 el.placeholder = translations[lang][key];
             } else {
+                // Caso especial para el saludo del usuario
+                if (key === 'nav_hello') {
+                    const savedUser = localStorage.getItem('user');
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+                            if (user && user.nombre) {
+                                const prefixes = { es: 'Hola, ', en: 'Hello, ', pt: 'Olá, ' };
+                                el.textContent = (prefixes[lang] || 'Hola, ') + user.nombre;
+                                return;
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear usuario en i18n:", e);
+                        }
+                    }
+                }
                 // Para textos normales
                 el.innerHTML = translations[lang][key];
             }

@@ -149,3 +149,5 @@ Dependencias para el Frontend
 npm install --save axios bcryptjs json-server
 
 npm install --save express cors mysql2 bcryptjs nodemailer crypto
+
+esta rama: git clone -b ultimaversion --single-branch https://github.com/dpp01-jpg/amazon_proyecto.git

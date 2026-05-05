@@ -96,7 +96,9 @@
 
                             // 1. Mostrar nombre
                             if (user && user.nombre) {
-                                userGreeting.textContent = "Hola, " + user.nombre;
+                                const currentLang = localStorage.getItem('app_lang') || 'es';
+                                const prefixes = { es: 'Hola, ', en: 'Hello, ', pt: 'Olá, ' };
+                                userGreeting.textContent = (prefixes[currentLang] || 'Hola, ') + user.nombre;
                             }
 
                             // 2. Ajustar menú
