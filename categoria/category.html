@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="../Style.css" />
     <link rel="stylesheet" href="style4.css">
     
-    <!-- ================= JS ================= -->
     <script defer type="module" src="../js/main.js"></script>
     <script defer type="module" src="../js/cart.js"></script>
+    <script defer src="../js/i18n.js"></script>
+    <script defer src="../js/legal-cookies.js"></script>
 </head>
 <body>
     
@@ -28,8 +29,8 @@
 
     <!-- UBICACIÓN -->
     <div class="location nav-hover">
-        <span>Enviar a</span>
-        <strong>España</strong>
+        <span data-i18n="nav_send_to">Enviar a</span>
+        <strong data-i18n="nav_country">España</strong>
     </div>
 
     <!-- BUSCADOR -->
@@ -37,7 +38,7 @@
         <select class="search-category">
             <option>Todos</option>
         </select>
-        <input type="text" placeholder="Buscar en Amazon.es" />
+        <input type="text" placeholder="Buscar en Amazon.es" data-i18n="nav_search_placeholder" />
         <button class="search-btn">🔍</button>
     </div>
 
@@ -48,17 +49,17 @@
         <div class="dropdown nav-hover">
             <span class="dropbtn">🇪🇸 ES ▾</span>
             <div class="dropdown-content">
-                <a href="#">Español (ES)</a>
-                <a href="#">English (EN)</a>
-                <a href="#">Português (PT)</a>
+                <a href="#" onclick="changeLanguage('es')">Español (ES)</a>
+                <a href="#" onclick="changeLanguage('en')">English (EN)</a>
+                <a href="#" onclick="changeLanguage('pt')">Português (PT)</a>
             </div>
         </div>
 
         <!-- CUENTA -->
         <div class="dropdown nav-hover">
             <div class="nav-item">
-                <span id="nav-user-greeting">Hola, identifícate</span>
-                <strong>Cuenta y listas ▾</strong>
+                <span id="nav-user-greeting" data-i18n="nav_hello">Hola, identifícate</span>
+                <strong data-i18n="nav_account">Cuenta y listas ▾</strong>
             </div>
             <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
                 style="min-width: 200px; right: 0; left: auto; padding: 10px;">
@@ -119,13 +120,13 @@
 
         <!-- PEDIDOS -->
         <div class="nav-item nav-hover">
-            <span>Devoluciones</span>
-            <strong>y Pedidos</strong>
+            <span data-i18n="nav_returns">Devoluciones</span>
+            <strong data-i18n="nav_orders">y Pedidos</strong>
         </div>
 
         <!-- CARRITO -->
         <a href="../carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
-            🛒 <strong>Carrito</strong>
+            🛒 <strong data-i18n="nav_cart">Carrito</strong>
             <span id="cart-count" class="cart-badge">0</span>
         </a>
     </div>
@@ -226,6 +227,11 @@
     </div>
 
     <div class="footer-legal">
+        <div style="margin-bottom: 10px;">
+            <a href="../legales/aviso-legal.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Condiciones de Uso y Venta</a>
+            <a href="../legales/politica-privacidad.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Privacidad</a>
+            <a href="../legales/politica-cookies.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Cookies</a>
+        </div>
         <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
     </div>
 

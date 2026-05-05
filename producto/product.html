@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link rel="stylesheet" href="style3.css">
+    <script defer src="../js/i18n.js"></script>
     <script defer src="../js/legal-cookies.js"></script>
 </head>
 
@@ -23,8 +23,8 @@
 
         <!-- UBICACIÓN -->
         <div class="location nav-hover">
-            <span>Enviar a</span>
-            <strong>España</strong>
+            <span data-i18n="nav_send_to">Enviar a</span>
+            <strong data-i18n="nav_country">España</strong>
         </div>
 
         <!-- BUSCADOR -->
@@ -32,7 +32,7 @@
             <select class="search-category">
                 <option>Todos</option>
             </select>
-            <input id="product-search-input" type="text" placeholder="Buscar en Amazon.es" />
+            <input id="product-search-input" type="text" placeholder="Buscar en Amazon.es" data-i18n="nav_search_placeholder" />
             <button class="search-btn" id="product-search-btn">🔍</button>
         </div>
         <script>
@@ -55,17 +55,17 @@
             <div class="dropdown nav-hover">
                 <span class="dropbtn">🇪🇸 ES ▾</span>
                 <div class="dropdown-content">
-                    <a href="#">Español (ES)</a>
-                    <a href="#">English (EN)</a>
-                    <a href="#">Português (PT)</a>
+                    <a href="#" onclick="changeLanguage('es')">Español (ES)</a>
+                    <a href="#" onclick="changeLanguage('en')">English (EN)</a>
+                    <a href="#" onclick="changeLanguage('pt')">Português (PT)</a>
                 </div>
             </div>
 
             <!-- CUENTA -->
             <div class="dropdown nav-hover">
                 <div class="nav-item">
-                    <span id="nav-user-greeting">Hola, identifícate</span>
-                    <strong>Cuenta y listas ▾</strong>
+                    <span id="nav-user-greeting" data-i18n="nav_hello">Hola, identifícate</span>
+                    <strong data-i18n="nav_account">Cuenta y listas ▾</strong>
                 </div>
                 <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
                     style="min-width: 200px; right: 0; left: auto; padding: 10px;">
@@ -132,13 +132,13 @@
 
             <!-- PEDIDOS -->
             <div class="nav-item nav-hover">
-                <span>Devoluciones</span>
-                <strong>y Pedidos</strong>
+                <span data-i18n="nav_returns">Devoluciones</span>
+                <strong data-i18n="nav_orders">y Pedidos</strong>
             </div>
 
             <!-- CARRITO -->
             <a href="../carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
-                🛒 <strong>Carrito</strong>
+                🛒 <strong data-i18n="nav_cart">Carrito</strong>
                 <span id="cart-count" class="cart-badge">0</span>
             </a>
         </div>
