@@ -65,6 +65,7 @@ const mobileSearchBtn = document.querySelector(".mobile-search-btn");
 let currentPage = 1;
 const limit = 4;
 let currentSearch = "";
+let currentCategory = "";
 
 // ====== Resultado counter ======
 function showResultCounter(total, term) {
@@ -154,10 +155,11 @@ function renderSuggestions(items, query) {
     box.style.display = "block";
 }
 
-async function getData(page = 1, search = "") {
+async function getData(page = 1, search = "", category = "") {
     try {
         let url = `http://localhost:3000/api/products?page=${page}&limit=${limit}`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (category) url += `&category=${encodeURIComponent(category)}`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -267,22 +269,33 @@ function renderPagination(total) {
 }
 
 async function init() {
-    if (currentSearch) {
+    if (currentSearch || currentCategory) {
         enterSearchMode();
     } else {
         exitSearchMode();
-        return; // No hacer fetch si no hay búsqueda
+        return; // No hacer fetch si no hay búsqueda ni categoría
     }
 
-    const result = await getData(currentPage, currentSearch);
+    const result = await getData(currentPage, currentSearch, currentCategory);
 
     if (result && result.data) {
         localdata = result.data;
         renderCards(result.data);
         renderPagination(result.total);
-        showResultCounter(result.total, currentSearch);
+        
+        const term = currentSearch || (currentCategory ? "Categoría" : "");
+        showResultCounter(result.total, term);
     }
 }
+
+// Global function to be called from navigation.js
+window.filterByCategory = function(categoryId) {
+    currentCategory = categoryId || "";
+    currentSearch = ""; // Clear search when switching to category? Or combine? Let's clear for simplicity as requested.
+    if (searchInput) searchInput.value = "";
+    currentPage = 1;
+    init();
+};
 
 // ====== Eventos del buscador ======
 if (searchBtn && searchInput) {

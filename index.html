@@ -16,6 +16,7 @@
     <script defer src="./js/home-grid.js"></script>
     <script defer src="./js/legal-cookies.js"></script>
     <script defer src="./js/i18n.js"></script>
+    <script defer src="./js/navigation.js"></script>
 </head>
 
 <body>
@@ -177,13 +178,9 @@
     <!-- ======================== SUB-NAV ======================== -->
     <!-- ========================================================= -->
     <nav class="sub-nav">
-        <ul>
-            <li class="nav-hover"><strong>≡ Todo</strong></li>
-            <li class="nav-hover">Amazon Haul</li>
-            <li class="nav-hover">Supermercado</li>
-            <li class="nav-hover">Ofertas</li>
-            <li class="nav-hover">Amazon Basics</li>
-            <li class="nav-hover">Informática</li>
+        <ul id="dynamic-categories">
+            <li class="nav-hover" id="cat-todo"><strong>≡ Todo</strong></li>
+            <!-- Las categorías se cargarán dinámicamente aquí -->
         </ul>
     </nav>
 
