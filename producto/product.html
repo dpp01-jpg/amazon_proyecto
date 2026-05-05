@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link rel="stylesheet" href="style3.css">
+    <script defer src="../js/i18n.js"></script>
+    <script defer src="../js/legal-cookies.js"></script>
 </head>
 
 <body>
@@ -16,14 +17,14 @@
     <header class="main-header">
 
         <!-- LOGO -->
-        <div class="logo nav-hover">
-            <img src="./imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
-        </div>
+        <a href="../index.html" class="logo nav-hover">
+            <img src="../imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
+        </a>
 
         <!-- UBICACIÓN -->
         <div class="location nav-hover">
-            <span>Enviar a</span>
-            <strong>España</strong>
+            <span data-i18n="nav_send_to">Enviar a</span>
+            <strong data-i18n="nav_country">España</strong>
         </div>
 
         <!-- BUSCADOR -->
@@ -31,9 +32,21 @@
             <select class="search-category">
                 <option>Todos</option>
             </select>
-            <input type="text" placeholder="Buscar en Amazon.es" />
-            <button class="search-btn">🔍</button>
+            <input id="product-search-input" type="text" placeholder="Buscar en Amazon.es" data-i18n="nav_search_placeholder" />
+            <button class="search-btn" id="product-search-btn">🔍</button>
         </div>
+        <script>
+            document.getElementById('product-search-btn').addEventListener('click', () => {
+                const q = document.getElementById('product-search-input').value.trim();
+                window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+            });
+            document.getElementById('product-search-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const q = document.getElementById('product-search-input').value.trim();
+                    window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+                }
+            });
+        </script>
 
         <!-- HERRAMIENTAS DE USUARIO -->
         <div class="nav-tools">
@@ -42,31 +55,96 @@
             <div class="dropdown nav-hover">
                 <span class="dropbtn">🇪🇸 ES ▾</span>
                 <div class="dropdown-content">
-                    <a href="#">Español (ES)</a>
-                    <a href="#">English (EN)</a>
-                    <a href="#">Português (PT)</a>
+                    <a href="#" onclick="changeLanguage('es')">Español (ES)</a>
+                    <a href="#" onclick="changeLanguage('en')">English (EN)</a>
+                    <a href="#" onclick="changeLanguage('pt')">Português (PT)</a>
                 </div>
             </div>
 
             <!-- CUENTA -->
-            <div class="nav-item nav-hover">
-                <span>Hola, identifícate</span>
-                <strong>Cuenta y listas</strong>
+            <div class="dropdown nav-hover">
+                <div class="nav-item">
+                    <span id="nav-user-greeting" data-i18n="nav_hello">Hola, identifícate</span>
+                    <strong data-i18n="nav_account">Cuenta y listas ▾</strong>
+                </div>
+                <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
+                    style="min-width: 200px; right: 0; left: auto; padding: 10px;">
+                    <a href="../registro/login.html" id="login-link"
+                        style="background-color: #ffd814; border: 1px solid #a88734; border-radius: 3px; text-align: center; margin-bottom: 10px; font-weight: bold; color: #111;">Identifícate</a>
+                    <div id="user-only-actions" style="display: none; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="font-size: 13px; color: #111; margin-bottom: 5px;">Tu cuenta</p>
+                        <a href="#">Mis pedidos</a>
+                        <a href="#" onclick="logoutUser()" style="color: #007185;">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                function logoutUser() {
+                    if (confirm("¿Estás seguro de que quieres cerrar tu sesión?")) {
+                        localStorage.removeItem("user");
+                        window.location.reload();
+                    }
+                }
+
+                document.addEventListener("DOMContentLoaded", async () => {
+                    const userGreeting = document.getElementById("nav-user-greeting");
+                    const loginLink = document.getElementById("login-link");
+                    const userActions = document.getElementById("user-only-actions");
+                    const savedUser = localStorage.getItem("user");
+
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+                            if (user && user.nombre) {
+                                userGreeting.textContent = "Hola, " + user.nombre;
+                            }
+                            if (loginLink) loginLink.style.display = "none";
+                            if (userActions) userActions.style.display = "block";
+
+                            const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
+                            if (res.ok) {
+                                const status = await res.json();
+                                if (status.isBanned) {
+                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}`);
+                                    localStorage.removeItem("user");
+                                    window.location.reload();
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Error al leer usuario", e);
+                        }
+                    }
+
+                    // Enlace inteligente "Mis pedidos"
+                    const allLinks = document.querySelectorAll('.logout-dropdown a');
+                    allLinks.forEach(link => {
+                        if (link.textContent.includes("Mis pedidos")) {
+                            if (savedUser) {
+                                link.href = "../carrito/index.html";
+                            } else {
+                                link.href = "../login.html";
+                            }
+                        }
+                    });
+                });
+            </script>
 
             <!-- PEDIDOS -->
             <div class="nav-item nav-hover">
-                <span>Devoluciones</span>
-                <strong>y Pedidos</strong>
+                <span data-i18n="nav_returns">Devoluciones</span>
+                <strong data-i18n="nav_orders">y Pedidos</strong>
             </div>
 
             <!-- CARRITO -->
-            <div class="cart nav-hover">
-                🛒 <strong>Cesta</strong>
+            <a href="../carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
+                🛒 <strong data-i18n="nav_cart">Carrito</strong>
                 <span id="cart-count" class="cart-badge">0</span>
-            </div>
+            </a>
         </div>
     </header>
+
+    <script defer type="module" src="../js/cart.js"></script>
 
     <!-- ========================================================= -->
     <!-- ======================== SUB-NAV ======================== -->
@@ -122,7 +200,11 @@
             <p class="ventas">4 mil+ comprados el mes pasado</p>
 
             <div class="precio">
-                <span id="prod-price-main" class="simbolo">0.00</span><span class="decimal">€</span>
+                <div id="prod-promo-badge" class="promo-badge" style="display: none;">-0%</div>
+                <div class="precio-actual">
+                    <span id="prod-price-main" class="simbolo">0.00</span><span class="decimal">€</span>
+                </div>
+                <div id="prod-original-price" class="precio-original" style="display: none;">0.00 €</div>
             </div>
 
             <p class="precio-unidad">(0,05 € / unidad)</p>
@@ -144,7 +226,12 @@
         <!-- ZONA DERECHA: caja de compra -->
         <aside class="zona-compra">
             <div class="caja-compra">
-                <p class="precio-lateral" id="prod-price-aside">0.00 €</p>
+                <p class="precio-lateral">
+                    <span id="prod-price-aside">0.00 €</span>
+                    <span id="prod-original-price-aside"
+                        style="display: none; text-decoration: line-through; color: #565959; font-size: 14px; margin-left: 5px;">0.00
+                        €</span>
+                </p>
                 <p class="entrega">
                     Entrega GRATIS el viernes, 27 de marzo
                 </p>
@@ -152,12 +239,14 @@
 
                 <label for="cantidad">Cantidad:</label>
                 <select id="cantidad">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
                 </select>
 
-                <button class="boton-cesta">Añadir a la cesta</button>
+                <button class="boton-carrito">Añadir al carrito</button>
                 <button class="boton-comprar">Comprar ya</button>
 
                 <div class="datos-vendedor">
@@ -220,6 +309,11 @@
         </div>
 
         <div class="footer-legal">
+            <div style="margin-bottom: 10px;">
+                <a href="../legales/aviso-legal.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Condiciones de Uso y Venta</a>
+                <a href="../legales/politica-privacidad.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Privacidad</a>
+                <a href="../legales/politica-cookies.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Cookies</a>
+            </div>
             <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
         </div>
 

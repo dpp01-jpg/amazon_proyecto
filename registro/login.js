@@ -35,6 +35,36 @@ if (loginForm) {
                 window.location.href = '../index.html'; // Volver al inicio tras login
             } else {
                 errorMsg.textContent = data.error || 'Autenticación fallida.';
+                
+                // Si el error es de verificación (403), añadimos un botón para reenviar el correo
+                if (res.status === 403 && data.error.includes('verifica')) {
+                    const resendBtn = document.createElement('button');
+                    resendBtn.textContent = 'Reenviar enlace de verificación';
+                    resendBtn.style.marginTop = '10px';
+                    resendBtn.style.backgroundColor = '#f3f3f3';
+                    resendBtn.style.color = '#111';
+                    resendBtn.style.border = '1px solid #ccc';
+                    resendBtn.style.padding = '5px 10px';
+                    resendBtn.style.cursor = 'pointer';
+                    resendBtn.type = 'button';
+                    resendBtn.onclick = async () => {
+                        resendBtn.textContent = 'Enviando...';
+                        try {
+                            const reRes = await fetch('http://localhost:3000/api/resend-verification', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email })
+                            });
+                            const reData = await reRes.json();
+                            alert(reData.message || 'Enlace enviado.');
+                            resendBtn.textContent = 'Reenviar enlace (Enviado ✓)';
+                        } catch(e) {
+                            alert('Error de conexión al reenviar el correo.');
+                        }
+                    };
+                    errorMsg.appendChild(document.createElement('br'));
+                    errorMsg.appendChild(resendBtn);
+                }
             }
         } catch (err) {
             errorMsg.textContent = 'Error de conexión con el servidor.';

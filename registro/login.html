@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,62 +8,65 @@
     <!-- ================= CSS ================= -->
     <link rel="stylesheet" href="./style2.css" />
 </head>
+
 <body>
-        <header class="logo-contenedor">
-            <img src="/amazon_proyecto/imagenes/logo.negro.png" alt="logo" id="logo-black">
-        </header>
+    <header class="logo-contenedor">
+        <img src="../imagenes/logo.negro.png" alt="logo" id="logo-black">
+    </header>
 
-        <main class="contenedor-principal">
-            <section class="caja-login">
-                <h2>Inicia sesión o crea una cuenta</h2>
+    <main class="contenedor-principal">
+        <section class="caja-login">
+            <h2>Inicia sesión o crea una cuenta</h2>
 
-                <form id="loginForm">
-                    <p id="errorMsg" style="color:red; font-size:14px; margin-bottom:10px;"></p>
-                    <label for="usuario">Dirección de e-mail</label>
-                    <input type="email" id="usuario" name="usuario" required>
+            <form id="loginForm">
+                <p id="errorMsg" style="color:red; font-size:14px; margin-bottom:10px;"></p>
+                <label for="usuario">Dirección de e-mail</label>
+                <input type="email" id="usuario" name="usuario" required>
 
-                    <label for="password" style="margin-top:10px; display:block;">Contraseña</label>
-                    <input type="password" id="password" name="password" required style="width:100%; margin-bottom:15px; padding:8px;">
+                <label for="password" style="margin-top:10px; display:block;">Contraseña</label>
+                <input type="password" id="password" name="password" required
+                    style="width:100%; margin-bottom:15px; padding:8px;">
 
-                    <button type="submit">Continuar</button>
-                    <p style="margin-top:15px; text-align:center; font-size:13px;">
-                        ¿Eres nuevo en Amazon? <a href="register.html">Crea tu cuenta de Amazon</a>
-                    </p>
-                </form>
-
-                <script src="./login.js"></script>
-
-                <p class="texto-legal">
-                    Al continuar, aceptas las
-                    <a href="#">Condiciones de uso</a> y el
-                    <a href="#">Aviso de privacidad</a> de Amazon.
+                <button type="submit">Continuar</button>
+                <p style="margin-top:15px; text-align:center; font-size:13px;">
+                    ¿Eres nuevo en Amazon? <a href="register.html">Crea tu cuenta de Amazon</a>
                 </p>
+            </form>
 
-                <p class="ayuda">
-                    <a href="#">¿Necesitas ayuda?</a>
-                </p>
+            <script src="./login.js"></script>
 
-                <hr>
+            <p class="texto-legal">
+                Al continuar, aceptas las
+                <a href="#">Condiciones de uso</a> y el
+                <a href="#">Aviso de privacidad</a> de Amazon.
+            </p>
 
-                <h3>¿Compras para tu empresa?</h3>
-                <p class="empresa">
-                    <a href="#">Compra en Amazon Business</a>
-                </p>
-            </section>
+            <p class="ayuda">
+                <a href="#">¿Necesitas ayuda?</a>
+            </p>
 
-        
-        </main>
+            <hr>
 
-        <footer>
-            <div class="footer-enlaces">
-                <a href="#">Condiciones de uso</a>
-                <a href="#">Aviso de privacidad</a>
-                <a href="#">Ayuda</a>
-                <a href="#"> Aviso sobre cookies </a>
-                <a href="#"> Anuncios basados en intereses </a>
+            <h3>¿Compras para tu empresa?</h3>
+            <p class="empresa">
+                <a href="#">Compra en Amazon Business</a>
+            </p>
+        </section>
 
-            </div>
-            <p class="copyright">© 1996-2026, Amazon.com, Inc. o sus afiliados</p>
-        </footer>
+
+    </main>
+
+    <footer>
+        <div class="footer-enlaces">
+            <a href="#">Condiciones de uso</a>
+            <a href="#">Aviso de privacidad</a>
+            <a href="#">Ayuda</a>
+            <a href="#"> Aviso sobre cookies </a>
+            <a href="#"> Anuncios basados en intereses </a>
+
+        </div>
+        <p class="copyright">© 1996-2026, Amazon.com, Inc. o sus afiliados</p>
+    </footer>
 </body>
+
 </html>

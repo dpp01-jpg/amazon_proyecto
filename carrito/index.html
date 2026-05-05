@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrito de compra – Amazon Clone</title>
+
+    <!-- ================= CSS ================= -->
+    <link rel="stylesheet" href="../Style.css" />
+    <link rel="stylesheet" href="./carrito.css" />
+
+    <!-- ================= JS ================= -->
+    <script defer type="module" src="../js/main.js"></script>
+    <script defer type="module" src="../js/carrito-display.js"></script>
+</head>
+
+<body>
+
+    <!-- ========================================================= -->
+    <!-- ======================== HEADER ========================= -->
+    <!-- ========================================================= -->
+    <header class="main-header">
+        <div class="logo nav-hover" onclick="window.location.href='../index.html'">
+            <img src="../imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
+        </div>
+
+        <div class="location nav-hover">
+            <span>Enviar a</span>
+            <strong>España</strong>
+        </div>
+
+        <div class="search-container">
+            <select class="search-category">
+                <option>Todos</option>
+            </select>
+            <input id="cart-search-input" type="text" placeholder="Buscar en Amazon.es" />
+            <button class="search-btn" id="cart-search-btn">🔍</button>
+        </div>
+        <script>
+            document.getElementById('cart-search-btn').addEventListener('click', () => {
+                const q = document.getElementById('cart-search-input').value.trim();
+                window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+            });
+            document.getElementById('cart-search-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const q = document.getElementById('cart-search-input').value.trim();
+                    window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+                }
+            });
+        </script>
+
+        <div class="nav-tools">
+            <div class="dropdown nav-hover">
+                <span class="dropbtn">🇪🇸 ES ▾</span>
+                <div class="dropdown-content">
+                    <a href="#">Español (ES)</a>
+                    <a href="#">English (EN)</a>
+                    <a href="#">Português (PT)</a>
+                </div>
+            </div>
+
+            <!-- CUENTA -->
+            <div class="dropdown nav-hover">
+                <div class="nav-item">
+                    <span id="nav-user-greeting">Hola, identifícate</span>
+                    <strong>Cuenta y listas ▾</strong>
+                </div>
+                <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
+                    style="min-width: 200px; right: 0; left: auto; padding: 10px;">
+                    <a href="../registro/login.html" id="login-link"
+                        style="background-color: #ffd814; border: 1px solid #a88734; border-radius: 3px; text-align: center; margin-bottom: 10px; font-weight: bold; color: #111;">Identifícate</a>
+                    <div id="user-only-actions" style="display: none; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="font-size: 13px; color: #111; margin-bottom: 5px;">Tu cuenta</p>
+                        <a href="#">Mis pedidos</a>
+                        <a href="#" onclick="logoutUser()" style="color: #007185;">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function logoutUser() {
+                    if (confirm("¿Estás seguro de que quieres cerrar tu sesión?")) {
+                        localStorage.removeItem("user");
+                        window.location.reload();
+                    }
+                }
+
+                document.addEventListener("DOMContentLoaded", async () => {
+                    const userGreeting = document.getElementById("nav-user-greeting");
+                    const loginLink = document.getElementById("login-link");
+                    const userActions = document.getElementById("user-only-actions");
+                    const savedUser = localStorage.getItem("user");
+
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+                            if (user && user.nombre) {
+                                userGreeting.textContent = "Hola, " + user.nombre;
+                            }
+                            if (loginLink) loginLink.style.display = "none";
+                            if (userActions) userActions.style.display = "block";
+
+                            const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
+                            if (res.ok) {
+                                const status = await res.json();
+                                if (status.isBanned) {
+                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}`);
+                                    localStorage.removeItem("user");
+                                    window.location.reload();
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Error al leer usuario", e);
+                        }
+                    }
+
+                    // Enlace inteligente "Mis pedidos"
+                    const allLinks = document.querySelectorAll('.logout-dropdown a');
+                    allLinks.forEach(link => {
+                        if (link.textContent.includes("Mis pedidos")) {
+                            if (savedUser) {
+                                link.href = "./index.html"; // Ya estamos en /carrito/
+                            } else {
+                                link.href = "../login.html";
+                            }
+                        }
+                    });
+                });
+            </script>
+
+            <div class="nav-item nav-hover">
+                <span>Devoluciones</span>
+                <strong>y Pedidos</strong>
+            </div>
+
+            <a href="./index.html" class="cart nav-hover active-cart" style="text-decoration: none; color: inherit;">
+                🛒 <strong>Carrito</strong>
+                <span id="cart-count" class="cart-badge">0</span>
+            </a>
+        </div>
+    </header>
+
+    <nav class="sub-nav">
+        <ul>
+            <li class="nav-hover"><strong>≡ Todo</strong></li>
+            <li class="nav-hover">Amazon Haul</li>
+            <li class="nav-hover">Supermercado</li>
+            <li class="nav-hover">Ofertas</li>
+            <li class="nav-hover">Amazon Basics</li>
+            <li class="nav-hover">Informática</li>
+        </ul>
+    </nav>
+
+    <!-- ========================================================= -->
+    <!-- ===================== CONTENIDO CARRITO ================= -->
+    <!-- ========================================================= -->
+    <main class="cart-main-container">
+        <div class="cart-left-column">
+            <div class="cart-box">
+                <h1 class="cart-title">Carrito</h1>
+                <div class="cart-header-labels">
+                    <span>Precio</span>
+                </div>
+                <hr class="cart-divider">
+
+                <div id="cart-items-container">
+                    <!-- Los productos se cargarán aquí dinámicamente -->
+                    <div class="loading-cart">Cargando tu carrito...</div>
+                </div>
+
+                <div class="cart-subtotal-footer" id="cart-subtotal-bottom">
+                    Subtotal (0 productos): <strong>0,00 €</strong>
+                </div>
+            </div>
+
+            <!-- Estado vacío (oculto por defecto) -->
+            <div id="empty-cart-state" class="cart-box empty-state" style="display: none;">
+                <div class="empty-cart-content">
+                    <img src="../imagenes/empty-cart.png" alt="Carrito vacío" class="empty-cart-img">
+                    <div class="empty-cart-text">
+                        <h2>Tu carrito de Amazon está vacío</h2>
+                        <p>Tus ofertas te están esperando. Cuando añadas artículos a tu carrito, aparecerán aquí.</p>
+                        <a href="../index.html" class="btn-amazon-primary">Continuar comprando</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-right-column">
+            <div class="cart-box summary-box">
+                <div id="cart-summary-subtotal">
+                    Subtotal (0 productos): <strong>0,00 €</strong>
+                </div>
+                <div class="gift-option">
+                    <input type="checkbox" id="is-gift">
+                    <label for="is-gift">Parte del pedido es un regalo</label>
+                </div>
+                <button class="btn-amazon-primary full-width" onclick="window.location.href='#'">Tramitar
+                    pedido</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- ======================== FOOTER ========================= -->
+    <!-- ========================================================= -->
+    <footer class="footer">
+        <div class="footer-top">
+            <a href="#">Volver arriba</a>
+        </div>
+        <div class="footer-links">
+            <div class="column">
+                <h4>Conócenos</h4>
+                <a href="#">Trabajar en Amazon</a>
+                <a href="#">Sobre Amazon.es</a>
+                <a href="#">Sostenibilidad</a>
+                <a href="#">Amazon Science</a>
+            </div>
+            <div class="column">
+                <h4>Gana dinero con nosotros</h4>
+                <a href="#">Vender en Amazon</a>
+                <a href="#">Programa de afiliados</a>
+                <a href="#">Logística de Amazon</a>
+            </div>
+            <div class="column">
+                <h4>Métodos de pago Amazon</h4>
+                <a href="#">Métodos de pago</a>
+                <a href="#">Tarjetas regalo</a>
+                <a href="#">Recarga online</a>
+            </div>
+            <div class="column">
+                <h4>¿Necesitas ayuda?</h4>
+                <a href="#">Localizar o gestionar compras</a>
+                <a href="#">Tarifas y políticas de envío</a>
+                <a href="#">Atención al cliente</a>
+            </div>
+        </div>
+        <div class="footer-legal">
+            <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -25,17 +25,64 @@ document.addEventListener("DOMContentLoaded", async () => {
             imagePath = imagePath.replace('/amazon_proyecto/', '../');
         }
 
-        // Rellenar la información en la plantilla
+        // Rellenar la información básica en la plantilla
         document.getElementById('prod-title').textContent = product.title;
         document.getElementById('prod-image').src = imagePath;
-        document.getElementById('prod-price-main').textContent = product.price;
-        document.getElementById('prod-price-aside').textContent = product.price + " €";
 
+        // ====== Lógica de Precios y Descuentos (NUEVO/ACTUALIZADO) ======
+        const basePrice = parseFloat(product.price);
+        let finalPrice = basePrice;
+        
+        if (product.promo_percent) {
+            finalPrice = basePrice * (1 - (product.promo_percent / 100));
+            
+            // Mostrar elementos de descuento
+            const badge = document.getElementById('prod-promo-badge');
+            const originalPriceEl = document.getElementById('prod-original-price');
+            const originalPriceAsideEl = document.getElementById('prod-original-price-aside');
+            
+            if (badge) {
+                badge.textContent = `-${product.promo_percent}%`;
+                badge.style.display = 'inline-block';
+            }
+            if (originalPriceEl) {
+                originalPriceEl.textContent = `Precio recomendado: ${basePrice.toFixed(2)} €`;
+                originalPriceEl.style.display = 'block';
+            }
+            if (originalPriceAsideEl) {
+                originalPriceAsideEl.textContent = `${basePrice.toFixed(2)} €`;
+                originalPriceAsideEl.style.display = 'inline-block';
+            }
+        }
+
+        // Rellenar los precios finales
+        const priceMain = document.getElementById('prod-price-main');
+        const priceAside = document.getElementById('prod-price-aside');
+        
+        if (priceMain) priceMain.textContent = finalPrice.toFixed(2);
+        if (priceAside) priceAside.textContent = finalPrice.toFixed(2) + " €";
+
+        // Actualizamos el objeto product para que addToCart use el precio rebajado si lo requiere, 
+        // aunque el backend suele ser la fuente de verdad, esto ayuda al feedback visual.
+        product.final_price = finalPrice;
+
+
+        // ====== Renderizar Descripción con Formateo Inteligente (NUEVO) ======
         if (product.description && product.description !== 'null') {
-            document.getElementById('prod-desc').innerHTML = `
-                <h2>Acerca de este producto</h2>
-                <p>${product.description}</p>
-            `;
+            let desc = product.description;
+            
+            // EXPRESIÓN REGULAR: Dividir por guiones, puntos seguidos de mayúscula o saltos de línea
+            const caracteristicas = desc.split(/(?:\s*-\s*|\.\s+(?=[A-Z])|\n)/);
+            
+            let descHTML = '<h2>Acerca de este producto</h2><ul>';
+            caracteristicas.forEach(item => {
+                const text = item.trim();
+                if (text.length > 5) {
+                    descHTML += `<li>${text}</li>`;
+                }
+            });
+            descHTML += '</ul>';
+            document.getElementById('prod-desc').innerHTML = descHTML;
         } else {
             document.getElementById('prod-desc').innerHTML = `
                 <h2>Acerca de este producto</h2>
@@ -43,26 +90,38 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }
 
-        // ====== Renderizar Detalles Técnicos (NUEVO) ======
+        // ====== Renderizar Detalles Técnicos con Regex (NUEVO) ======
         const detailsContainer = document.getElementById('prod-details');
         if (product.detalles && product.detalles !== 'null' && product.detalles.trim() !== '') {
-            let detailsHTML = '';
-            // Dividir el texto del campo detalles por salto de línea
-            const lineas = product.detalles.split('\\n');
+            let rawDetails = product.detalles.replace(/\\n/g, '\n');
+
+            // Regex para insertar dos puntos si faltan en palabras clave conocidas
+            const keys = ["Marca", "Tipo de instalación", "Dimensiones", "Capacidad", "Función especial", "Color", "Material", "Nivel de ruido", "Componentes incluidos"];
+            keys.forEach(key => {
+                const regex = new RegExp(`(${key})(?!:)\\s+`, 'g');
+                rawDetails = rawDetails.replace(regex, `$1: `);
+            });
+
+            const lineas = rawDetails.split('\n');
+            let detailsHTML = '<div class="specs-container" style="display: flex; flex-direction: column; gap: 8px;">';
+            
             lineas.forEach(linea => {
-                if(linea.trim() === '') return;
+                if (linea.trim() === '') return;
                 
-                // Si la línea dice "Marca: Sony", partir en Clave/Valor
                 const separador = linea.indexOf(':');
                 if (separador !== -1) {
                     const clave = linea.substring(0, separador).trim();
                     const valor = linea.substring(separador + 1).trim();
-                    detailsHTML += `<p><strong>${clave}:</strong> ${valor}</p>`;
+                    detailsHTML += `
+                        <div style="display: grid; grid-template-columns: 150px 1fr; border-bottom: 1px solid #eee; padding: 4px 0;">
+                            <span style="color: #565959; font-weight: bold;">${clave}</span>
+                            <span>${valor}</span>
+                        </div>`;
                 } else {
-                    // Si no tiene 2 puntos, pintar normal
-                    detailsHTML += `<p>${linea}</p>`;
+                    detailsHTML += `<p style="margin: 4px 0;">${linea}</p>`;
                 }
             });
+            detailsHTML += '</div>';
             detailsContainer.innerHTML = detailsHTML;
         }
 
@@ -74,6 +133,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Poner también el título en la parte del navegador (opcional)
         document.title = product.title + " - Amazon Clone";
+
+        // ====== Lógica de Añadir al Carrito (NUEVO) ======
+        const addBtn = document.querySelector(".boton-carrito");
+        if (addBtn) {
+            addBtn.onclick = () => {
+                if (typeof window.addToCart === 'function') {
+                    const selectEl = document.getElementById("cantidad");
+                    const cantidadSeleccionada = selectEl ? parseInt(selectEl.value, 10) : 1;
+                    
+                    console.log("Añadiendo al carrito - ID:", product.id, "Cantidad:", cantidadSeleccionada);
+                    window.addToCart(product, cantidadSeleccionada);
+                } else {
+                    console.error("Error: Lógica del carrito no disponible.");
+                }
+            };
+        }
+
+        // ====== Lógica de Comprar Ya (NUEVO) ======
+        const buyBtn = document.querySelector(".boton-comprar");
+        if (buyBtn) {
+            buyBtn.onclick = async () => {
+                if (typeof window.addToCart === 'function') {
+                    const selectEl = document.getElementById("cantidad");
+                    const cantidadSeleccionada = selectEl ? parseInt(selectEl.value, 10) : 1;
+                    
+                    console.log("Comprando ya - ID:", product.id, "Cantidad:", cantidadSeleccionada);
+                    // Añadimos y redirigimos
+                    await window.addToCart(product, cantidadSeleccionada);
+                    window.location.href = "../carrito/index.html";
+                } else {
+                    console.error("Error: Lógica del carrito no disponible.");
+                }
+            };
+        }
 
     } catch (err) {
         console.error("Error al cargar producto:", err);

@@ -79,11 +79,15 @@ window.logoutAdmin = () => {
     }
 };
 
+// Variable global para guardar los productos actuales
+let currentProducts = [];
+
 async function fetchProducts() {
     try {
         // Obtenemos hasta 100 productos para el admin
         const response = await fetch(`${API_URL}/products?limit=100&page=1`);
         const result = await response.json();
+        currentProducts = result.data; // Guardamos la lista actual
         renderTable(result.data);
     } catch (err) {
         console.error('Error fetching products:', err);
@@ -101,13 +105,20 @@ function renderTable(products) {
             <td>${p.title}${promoInfo}</td>
             <td>${p.price} €</td>
             <td>
-                <button class="action-btn edit-btn" onclick="editProduct(${p.id}, \`${p.title.replace(/'/g, "\\'")}\`, ${p.price}, '${p.image}', \`${p.description ? p.description.replace(/'/g, "\\'") : ''}\`, ${p.id_categoria}, \`${p.detalles ? p.detalles.replace(/\n/g, '\\n').replace(/'/g, "\\'") : ''}\`, ${p.promo_percent || 'null'}, '${p.promo_text || ''}')">Editar</button>
+                <button class="action-btn edit-btn" onclick="prepareEdit(${p.id})">Editar</button>
                 <button class="action-btn delete-btn" onclick="deleteProduct(${p.id})">Eliminar</button>
             </td>
         `;
         productsTable.appendChild(tr);
     });
 }
+
+window.prepareEdit = (id) => {
+    const p = currentProducts.find(product => product.id === id);
+    if (p) {
+        editProduct(p.id, p.title, p.price, p.image, p.description, p.id_categoria, p.detalles, p.promo_percent, p.promo_text);
+    }
+};
 
 productForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -189,8 +200,8 @@ cancelBtn.addEventListener('click', resetForm);
 function renderUsersAdminPanel() {
     const container = document.getElementById('users-container');
     container.innerHTML = `
-        <hr style="margin-bottom: 20px;">
-        <h2 style="color: #c40000;">Gestión de Usuarios (Blacklist / Whitelist)</h2>
+        <h1>Gestión de Usuarios</h1>
+        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Administra los roles de usuario (Whitelist) y aplica baneos (Blacklist).</p>
         <table id="usersTable">
             <thead>
                 <tr>
@@ -204,6 +215,12 @@ function renderUsersAdminPanel() {
             <tbody></tbody>
         </table>
     `;
+    
+    // Mostrar la opción en el sidebar
+    const menuUsers = document.getElementById('menu-users');
+    if (menuUsers) {
+        menuUsers.style.display = 'flex';
+    }
 }
 
 window.fetchUsersAdmin = async () => {

@@ -14,6 +14,8 @@
     <script defer type="module" src="./js/cart.js"></script>
     <script defer src="./js/carrusel.js"></script>
     <script defer src="./js/home-grid.js"></script>
+    <script defer src="./js/legal-cookies.js"></script>
+    <script defer src="./js/i18n.js"></script>
 </head>
 
 <body>
@@ -30,8 +32,8 @@
 
         <!-- UBICACIÓN -->
         <div class="location nav-hover">
-            <span>Enviar a</span>
-            <strong>España</strong>
+            <span data-i18n="nav_send_to">Enviar a</span>
+            <strong data-i18n="nav_country">España</strong>
         </div>
 
         <!-- BUSCADOR -->
@@ -39,7 +41,7 @@
             <select class="search-category">
                 <option>Todos</option>
             </select>
-            <input type="text" placeholder="Buscar en Amazon.es" />
+            <input type="text" placeholder="Buscar en Amazon.es" data-i18n="nav_search_placeholder" />
             <button class="search-btn">🔍</button>
         </div>
 
@@ -50,58 +52,101 @@
             <div class="dropdown nav-hover">
                 <span class="dropbtn">🇪🇸 ES ▾</span>
                 <div class="dropdown-content">
-                    <a href="#">Español (ES)</a>
-                    <a href="#">English (EN)</a>
-                    <a href="#">Português (PT)</a>
+                    <a href="#" onclick="changeLanguage('es')">Español (ES)</a>
+                    <a href="#" onclick="changeLanguage('en')">English (EN)</a>
+                    <a href="#" onclick="changeLanguage('pt')">Português (PT)</a>
                 </div>
             </div>
 
             <!-- CUENTA -->
-            <div class="nav-item nav-hover">
-                <span id="nav-user-greeting">Hola, identifícate</span>
-                <strong>Cuenta y listas</strong>
+            <div class="dropdown nav-hover">
+                <div class="nav-item">
+                    <span id="nav-user-greeting" data-i18n="nav_hello">Hola, identifícate</span>
+                    <strong data-i18n="nav_account">Cuenta y listas ▾</strong>
+                </div>
+                <div class="dropdown-content logout-dropdown" id="account-dropdown-content"
+                    style="min-width: 200px; right: 0; left: auto; padding: 10px;">
+                    <a href="./registro/login.html" id="login-link"
+                        style="background-color: #ffd814; border: 1px solid #a88734; border-radius: 3px; text-align: center; margin-bottom: 10px; font-weight: bold; color: #111;">Identifícate</a>
+                    <div id="user-only-actions" style="display: none; border-top: 1px solid #eee; padding-top: 10px;">
+                        <p style="font-size: 13px; color: #111; margin-bottom: 5px;">Tu cuenta</p>
+                        <a href="#">Mis pedidos</a>
+                        <a href="#" onclick="logoutUser()" style="color: #007185;">Cerrar sesión</a>
+                    </div>
+                </div>
             </div>
+
             <script>
+                function logoutUser() {
+                    if (confirm("¿Estás seguro de que quieres cerrar tu sesión?")) {
+                        localStorage.removeItem("user");
+                        window.location.reload();
+                    }
+                }
+
                 document.addEventListener("DOMContentLoaded", async () => {
                     const userGreeting = document.getElementById("nav-user-greeting");
+                    const loginLink = document.getElementById("login-link");
+                    const userActions = document.getElementById("user-only-actions");
                     const savedUser = localStorage.getItem("user");
+
                     if (savedUser) {
                         try {
                             const user = JSON.parse(savedUser);
 
-                            // Verificar en la BD si actualmente está baneado
+                            // 1. Mostrar nombre
+                            if (user && user.nombre) {
+                                userGreeting.textContent = "Hola, " + user.nombre;
+                            }
+
+                            // 2. Ajustar menú
+                            if (loginLink) loginLink.style.display = "none";
+                            if (userActions) userActions.style.display = "block";
+
+                            // 3. Patrulla de seguridad
                             const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
                             if (res.ok) {
                                 const status = await res.json();
                                 if (status.isBanned) {
-                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}\nHasta: ${new Date(status.until).toLocaleString()}`);
+                                    alert(`🚨 ATENCIÓN 🚨\nHas sido expulsado temporalmente de Amazon.\nMotivo: ${status.reason || 'Sin motivo'}`);
                                     localStorage.removeItem("user");
                                     window.location.reload();
-                                    return;
                                 }
-                            }
-
-                            if (user && user.nombre) {
-                                userGreeting.textContent = "Hola, " + user.nombre;
                             }
                         } catch (e) {
                             console.error("Error al leer usuario", e);
                         }
                     }
+
+                    // Lógica para el enlace inteligente de "Mis pedidos"
+                    const allLinks = document.querySelectorAll('.logout-dropdown a');
+                    allLinks.forEach(link => {
+                        if (link.textContent.includes("Mis pedidos")) {
+                            if (savedUser) {
+                                link.href = "./carrito/index.html";
+                            } else {
+                                link.href = "./registro/login.html";
+                            }
+                        }
+                    });
+
+                    if (!savedUser) {
+                        const loginUrl = './registro/login.html';
+                        if (loginLink) loginLink.href = loginUrl;
+                    }
                 });
             </script>
-
             <!-- PEDIDOS -->
             <div class="nav-item nav-hover">
-                <span>Devoluciones</span>
-                <strong>y Pedidos</strong>
+                <span data-i18n="nav_returns">Devoluciones</span>
+                <strong data-i18n="nav_orders">y Pedidos</strong>
             </div>
 
             <!-- CARRITO -->
-            <div class="cart nav-hover">
-                🛒 <strong>Cesta</strong>
+            <a href="./carrito/index.html" class="cart nav-hover" style="text-decoration: none; color: inherit;">
+                🛒 <strong data-i18n="nav_cart">Carrito</strong>
                 <span id="cart-count" class="cart-badge">0</span>
-            </div>
+            </a>
         </div>
     </header>
 
@@ -144,9 +189,11 @@
             <!-- Contenido dinámico desde js/home-grid.js -->
         </div>
 
-        <div class="zona-datos-js" id="zona-datos-js"></div>
-
     </main>
+
+    <!-- Zona de resultados de búsqueda (fuera del grid del carrusel) -->
+    <section id="zona-datos-js" style="display:none;"></section>
+
     <!-- ========================================================= -->
     <!-- ======================== FOOTER ========================= -->
     <!-- ========================================================= -->
@@ -188,6 +235,11 @@
         </div>
 
         <div class="footer-legal">
+            <div style="margin-bottom: 10px;">
+                <a href="./legales/aviso-legal.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Condiciones de Uso y Venta</a>
+                <a href="./legales/politica-privacidad.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Privacidad</a>
+                <a href="./legales/politica-cookies.html" style="color: #ddd; margin: 0 10px; text-decoration: none; font-size: 13px;">Aviso de Cookies</a>
+            </div>
             <p>© 1996-2026, Amazon Clone, Inc. o sus afiliados</p>
         </div>
 
