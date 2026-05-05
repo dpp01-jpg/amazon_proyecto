@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchCategories() {
         try {
-            const response = await fetch('http://192.168.12.27:3000/api/categories');
+            const response = await fetch('http://localhost:3000/api/categories');
             if (!response.ok) throw new Error("Fallo al conectar con la API de categorías");
             const categories = await response.json();
 

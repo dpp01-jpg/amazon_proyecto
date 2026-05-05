@@ -32,7 +32,7 @@ async function renderCart() {
 
     try {
         // 2. Obtener productos del carrito desde la base de datos
-        const res = await fetch(`http://192.168.12.27:3000/api/cart/${user.id}`);
+        const res = await fetch(`http://localhost:3000/api/cart/${user.id}`);
         if (!res.ok) throw new Error("Error al comunicarse con el servidor");
         const cart = await res.json();
 
@@ -141,7 +141,7 @@ window.changeQuantity = async function (productId, newQty) {
     const user = JSON.parse(savedUser);
 
     try {
-        const res = await fetch(`http://192.168.12.27:3000/api/cart/${user.id}/${productId}`, {
+        const res = await fetch(`http://localhost:3000/api/cart/${user.id}/${productId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cantidad: parseInt(newQty) })
@@ -165,7 +165,7 @@ window.removeItem = async function (productId) {
     const user = JSON.parse(savedUser);
 
     try {
-        const res = await fetch(`http://192.168.12.27:3000/api/cart/${user.id}/${productId}`, {
+        const res = await fetch(`http://localhost:3000/api/cart/${user.id}/${productId}`, {
             method: 'DELETE'
         });
         if (res.ok) {

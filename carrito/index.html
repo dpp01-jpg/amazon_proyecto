@@ -108,7 +108,7 @@
                             if (loginLink) loginLink.style.display = "none";
                             if (userActions) userActions.style.display = "block";
 
-                            const res = await fetch(`http://192.168.12.27:3000/api/users/${user.email}/status`);
+                            const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
                             if (res.ok) {
                                 const status = await res.json();
                                 if (status.isBanned) {

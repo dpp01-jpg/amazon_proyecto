@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- 1. Obtención Dinámica de Imágenes ---
     let carouselItems = [];
     try {
-        const response = await fetch("http://192.168.12.27:3000/api/carousel");
+        const response = await fetch("http://localhost:3000/api/carousel");
         if (response.ok) {
             carouselItems = await response.json();
         }

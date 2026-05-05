@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
--- Host: 192.168.12.27    Database: amazon_db
+-- Host: localhost    Database: amazon_db
 -- ------------------------------------------------------
 -- Server version	10.4.32-MariaDB
 

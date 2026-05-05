@@ -204,7 +204,7 @@ app.post('/api/register', async (req, res) => {
         );
 
         // Enviar correo
-        const verificationUrl = `http://192.168.12.27:3000/api/verify-email?token=${verificationToken}`;
+        const verificationUrl = `http://localhost:3000/api/verify-email?token=${verificationToken}`;
         
         console.log("\n==============================================");
         console.log("NUEVO USUARIO REGISTRADO:", email);
@@ -301,7 +301,7 @@ app.post('/api/resend-verification', async (req, res) => {
             await db.query('UPDATE usuarios SET verification_token = ? WHERE id = ?', [verificationToken, rows[0].id]);
         }
 
-        const verificationUrl = `http://192.168.12.27:3000/api/verify-email?token=${verificationToken}`;
+        const verificationUrl = `http://localhost:3000/api/verify-email?token=${verificationToken}`;
         console.log("\n==============================================");
         console.log("🔄 REENVÍO DE CORREO SOLICITADO PARA:", email);
         console.log("🔗 ENLACE DE VERIFICACIÓN (Púlsalo con Ctrl+Clic):");

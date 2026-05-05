@@ -107,7 +107,7 @@
                         if (loginLink) loginLink.style.display = "none";
                         if (userActions) userActions.style.display = "block";
 
-                        const res = await fetch(`http://192.168.12.27:3000/api/users/${user.email}/status`);
+                        const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
                         if (res.ok) {
                             const status = await res.json();
                             if (status.isBanned) {
@@ -174,7 +174,7 @@
 <nav class="sub-nav">
     <ul id="dynamic-category-nav" style="display:flex; list-style:none; gap:15px; margin:0; padding:0; overflow-x:auto; white-space:nowrap; align-items:center;">
         <li class="nav-hover">
-            <a href="../index.html" style="color:white; text-decoration:none; font-size:14px;"><strong>≡ Inicio</strong></a>
+            <a href="../index.html" style="color:white; text-decoration:none; font-size:14px;"><strong>≡ Todo</strong></a>
         </li>
         <!-- Dinámico desde category.js -->
     </ul>

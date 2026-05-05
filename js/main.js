@@ -6,7 +6,7 @@ import { addToCartLogic } from "./cart.js";
     if (!userData) return;
     try {
         const user = JSON.parse(userData);
-        const res = await fetch(`http://192.168.12.27:3000/api/users/${user.email}/status`);
+        const res = await fetch(`http://localhost:3000/api/users/${user.email}/status`);
         if (res.ok) {
             const status = await res.json();
             if (status.isBanned) {
@@ -106,7 +106,7 @@ function hideSuggestions() {
 async function fetchSuggestions(query) {
     if (!query || query.trim().length < 1) { hideSuggestions(); return; }
     try {
-        const res = await fetch(`http://192.168.12.27:3000/api/products/suggestions?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`http://localhost:3000/api/products/suggestions?q=${encodeURIComponent(query)}`);
         const items = await res.json();
         renderSuggestions(items, query);
     } catch (e) {
@@ -157,7 +157,7 @@ function renderSuggestions(items, query) {
 
 async function getData(page = 1, search = "", category = "") {
     try {
-        let url = `http://192.168.12.27:3000/api/products?page=${page}&limit=${limit}`;
+        let url = `http://localhost:3000/api/products?page=${page}&limit=${limit}`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
         if (category) url += `&category=${encodeURIComponent(category)}`;
 

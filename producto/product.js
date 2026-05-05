@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        const response = await fetch(`http://192.168.12.27:3000/api/products/${productId}`);
+        const response = await fetch(`http://localhost:3000/api/products/${productId}`);
 
         if (!response.ok) {
             document.getElementById('prod-title').textContent = "Producto no encontrado";
