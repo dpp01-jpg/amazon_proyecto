@@ -59,6 +59,8 @@ function exitSearchMode() {
 
 const searchInput = document.querySelector(".search-container input");
 const searchBtn = document.querySelector(".search-btn");
+const mobileSearchInput = document.querySelector(".mobile-search-input");
+const mobileSearchBtn = document.querySelector(".mobile-search-btn");
 
 let currentPage = 1;
 const limit = 4;
@@ -299,6 +301,35 @@ if (searchBtn && searchInput) {
             init();
         }
     });
+
+    // Mobile Search Events
+    if (mobileSearchBtn && mobileSearchInput) {
+        mobileSearchBtn.addEventListener("click", () => {
+            currentSearch = mobileSearchInput.value.trim();
+            if (searchInput) searchInput.value = currentSearch;
+            currentPage = 1;
+            init();
+        });
+
+        mobileSearchInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                currentSearch = mobileSearchInput.value.trim();
+                if (searchInput) searchInput.value = currentSearch;
+                currentPage = 1;
+                init();
+            }
+        });
+        
+        mobileSearchInput.addEventListener("input", () => {
+            const q = mobileSearchInput.value.trim();
+            if (q.length === 0) {
+                currentSearch = "";
+                if (searchInput) searchInput.value = "";
+                currentPage = 1;
+                exitSearchMode();
+            }
+        });
+    }
 
     // Cuando el usuario borra el texto: volver a la home
     searchInput.addEventListener("input", () => {

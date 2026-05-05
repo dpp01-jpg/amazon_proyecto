@@ -461,31 +461,185 @@ body {
 }
 
 /* ========================================================= */
+/* =================== MOBILE COMPONENTS ==================== */
+/* ========================================================= */
+
+/* Hamburger Menu Icon */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1200;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: 0.3s;
+}
+
+.menu-toggle.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+.mobile-search-container {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    height: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mobile-search-input {
+    flex-grow: 1;
+    border: none;
+    padding: 0 15px;
+    outline: none;
+    font-size: 16px;
+}
+
+.mobile-search-btn {
+    background-color: #febd69;
+    border: none;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+/* ========================================================= */
 /* ========================= RESPONSIVE ===================== */
 /* ========================================================= */
 
+@media (max-width: 1024px) {
+    .caja-amazon {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .footer-links {
+        gap: 40px;
+    }
+}
+
 @media (max-width: 768px) {
+    .main-header {
+        flex-wrap: wrap;
+        padding: 5px 15px;
+        gap: 5px;
+        justify-content: space-between;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .logo {
+        order: 1;
+        min-width: auto;
+        height: 30px;
+        padding: 2px;
+    }
+
+    .location {
+        display: none; 
+    }
+
+    .search-container {
+        display: none; 
+    }
+
+    .mobile-search-container {
+        display: flex;
+        order: 3;
+    }
+
+    .nav-tools {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        height: 100vh;
+        background-color: #131921;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px;
+        transition: 0.3s;
+        z-index: 1150;
+        gap: 20px;
+    }
+
+    .nav-tools.active {
+        left: 0;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    }
+
+    .cart {
+        order: 2;
+    }
+
+    .sub-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .sub-nav ul {
+        display: inline-flex;
+        padding-bottom: 5px;
+    }
 
     .hero-section {
-        height: 250px;
+        height: 200px;
     }
 
     .carousel-container {
-        height: 250px;
-    }
-
-    .anterior,
-    .siguiente {
-        padding: 10px;
-    }
-
-    .anterior1::before,
-    .siguiente1::before {
-        font-size: 22px;
+        height: 200px;
     }
 
     .content-grid {
-        margin-top: -150px;
+        margin-top: -80px;
+        padding: 10px;
+    }
+
+    .caja-amazon {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+
+    .columna-login, .cuadro-alumno {
+        width: 100% !important;
+        grid-column: span 2;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .caja-amazon {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .columna-login, .cuadro-alumno {
+        grid-column: span 1;
+    }
+
+    .hero-section, .carousel-container {
+        height: 160px;
     }
 }
 
@@ -495,14 +649,14 @@ body {
 
 .caja-amazon {
     display: grid;
-    grid-template-columns: repeat(4, 306.69px);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     justify-content: center;
     width: 100%;
 }
 
 .columna-login {
-    width: 306.69px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -657,31 +811,7 @@ body {
     margin-top: 20px;
 }
 
-/* responsive */
-@media (max-width: 1200px) {
-    .caja-amazon {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .caja-amazon {
-        grid-template-columns: 1fr;
-    }
-
-    .columna-login,
-    .cuadro-alumno {
-        width: 100%;
-    }
-
-    .imagen-una-sola img {
-        height: 220px;
-    }
-
-    .caja-anuncio-azul img {
-        height: auto;
-    }
-}
+/* Responsive rules removed as they are now consolidated above */
 
 /* ========================================================= */
 /* =================== RESULTADOS DE BÚSQUEDA ============== */

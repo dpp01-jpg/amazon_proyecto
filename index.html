@@ -25,6 +25,13 @@
     <!-- ========================================================= -->
     <header class="main-header">
 
+        <!-- HAMBURGER MENU (Mobile) -->
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
         <!-- LOGO -->
         <div class="logo nav-hover">
             <img src="./imagenes/amazon_PNG11.png" alt="Logotipo de Amazon" />
@@ -150,7 +157,21 @@
                 <span id="cart-count" class="cart-badge">0</span>
             </a>
         </div>
+
+        <!-- MOBILE SEARCH BAR (Visible only on mobile) -->
+        <div class="mobile-search-container">
+            <input type="text" placeholder="Buscar en Amazon.es" data-i18n="nav_search_placeholder" class="mobile-search-input" />
+            <button class="mobile-search-btn">🔍</button>
+        </div>
     </header>
+
+    <script>
+        // Lógica para el menú móvil
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.nav-tools').classList.toggle('active');
+            this.classList.toggle('open');
+        });
+    </script>
 
     <!-- ========================================================= -->
     <!-- ======================== SUB-NAV ======================== -->

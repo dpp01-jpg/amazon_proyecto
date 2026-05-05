@@ -20,6 +20,13 @@
 <!-- ========================================================= -->
 <header class="main-header">
 
+    <!-- HAMBURGER MENU (Mobile) -->
+    <div class="menu-toggle" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
     <!-- LOGO -->
     <div class="logo nav-hover">
         <a href="../index.html" style="display: flex; align-items: center; height: 100%;">
@@ -132,7 +139,33 @@
             <span id="cart-count" class="cart-badge">0</span>
         </a>
     </div>
+
+    <!-- MOBILE SEARCH BAR -->
+    <div class="mobile-search-container">
+        <input type="text" placeholder="Buscar en Amazon.es" id="mobile-search-input" class="mobile-search-input" />
+        <button class="mobile-search-btn" id="mobile-search-btn">🔍</button>
+    </div>
 </header>
+
+<script>
+    // Lógica para el menú móvil
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        document.querySelector('.nav-tools').classList.toggle('active');
+        this.classList.toggle('open');
+    });
+
+    // Lógica para el buscador móvil
+    document.getElementById('mobile-search-btn').addEventListener('click', () => {
+        const q = document.getElementById('mobile-search-input').value.trim();
+        window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+    });
+    document.getElementById('mobile-search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const q = document.getElementById('mobile-search-input').value.trim();
+            window.location.href = `../index.html${q ? '?search=' + encodeURIComponent(q) : ''}`;
+        }
+    });
+</script>
 
 
 <!-- ========================================================= -->

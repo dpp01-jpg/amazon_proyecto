@@ -32,8 +32,20 @@ if (registerForm) {
 
             const data = await res.json();
             if (res.ok) {
-                alert('Cuenta creada con éxito. Ahora puedes iniciar sesión.');
-                window.location.href = 'login.html'; // Redirigir a login
+                // En lugar de alert, mostramos un mensaje bonito en la misma página
+                registerForm.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h2 style="color: #007185;">¡Casi listo!</h2>
+                        <p style="font-size: 14px; color: #555; margin-bottom: 20px;">
+                            Hemos enviado un enlace de verificación a <strong>${email}</strong>.
+                        </p>
+                        <p style="font-size: 13px; color: #111;">
+                            Por favor, revisa tu bandeja de entrada (y la carpeta de spam) y haz clic en el enlace para activar tu cuenta.
+                        </p>
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                        <a href="login.html" style="color: #0066c0; text-decoration: none; font-size: 13px;">Volver al inicio de sesión</a>
+                    </div>
+                `;
             } else {
                 errorMsg.textContent = data.error || 'Error en el registro.';
             }

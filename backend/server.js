@@ -10,24 +10,40 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Configurar Nodemailer con Ethereal (para pruebas)
+// Configurar Nodemailer (Gmail o Ethereal fallback)
 let transporter;
-nodemailer.createTestAccount((err, account) => {
-    if (err) {
-        console.error('Failed to create a testing account. ' + err.message);
-        return;
-    }
-    transporter = nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
-        auth: {
-            user: account.user,
-            pass: account.pass
+
+async function setupEmail() {
+    if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'tu_correo@gmail.com') {
+        // Usar Gmail configurado en .env
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+        console.log("Servidor de correo Gmail configurado.");
+    } else {
+        // Fallback a Ethereal (solo para pruebas locales)
+        try {
+            let account = await nodemailer.createTestAccount();
+            transporter = nodemailer.createTransport({
+                host: account.smtp.host,
+                port: account.smtp.port,
+                secure: account.smtp.secure,
+                auth: {
+                    user: account.user,
+                    pass: account.pass
+                }
+            });
+            console.log("Servidor de correo Ethereal listo (pruebas).");
+        } catch (err) {
+            console.error('No se pudo crear cuenta de prueba Ethereal:', err.message);
         }
-    });
-    console.log("Servidor de correo Ethereal listo.");
-});
+    }
+}
+setupEmail();
 
 // ========================
 // ENDPOINTS PRODUCTOS
@@ -199,12 +215,24 @@ app.post('/api/register', async (req, res) => {
         if (transporter) {
             try {
                 const info = await transporter.sendMail({
-                    from: '"Amazon Clone" <no-reply@amazonclone.local>',
+                    from: `"Amazon Clone" <${process.env.EMAIL_USER || 'no-reply@amazonclone.local'}>`,
                     to: email,
                     subject: "Verifica tu correo electrónico - Amazon Clone",
-                    html: `<p>Hola ${nombre},</p>
-                           <p>Gracias por registrarte. Por favor, haz clic en el siguiente enlace para verificar tu correo:</p>
-                           <a href="${verificationUrl}">${verificationUrl}</a>`
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon Logo" style="width: 100px; margin-bottom: 20px;">
+                            <h2 style="color: #111;">Verifica tu dirección de correo electrónico</h2>
+                            <p>Hola ${nombre},</p>
+                            <p>Para completar la creación de tu cuenta, por favor verifica tu dirección de correo electrónico haciendo clic en el botón de abajo:</p>
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="${verificationUrl}" style="background-color: #f0c14b; border: 1px solid #a88734; border-radius: 3px; color: #111; padding: 10px 20px; text-decoration: none; font-weight: bold; display: inline-block;">Verificar correo</a>
+                            </div>
+                            <p style="font-size: 12px; color: #555;">Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+                            <p style="font-size: 12px; color: #0066c0;">${verificationUrl}</p>
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                            <p style="font-size: 12px; color: #777;">Si no has creado esta cuenta, puedes ignorar este correo.</p>
+                        </div>
+                    `
                 });
                 console.log("👀 VISTA PREVIA DEL CORREO ETHEREAL:", nodemailer.getTestMessageUrl(info));
                 console.log("==============================================\n");
@@ -238,12 +266,17 @@ app.get('/api/verify-email', async (req, res) => {
 
         await db.query('UPDATE usuarios SET is_verified = TRUE, verification_token = NULL WHERE id = ?', [rows[0].id]);
         
+        const frontendUrl = process.env.FRONTEND_URL || 'http://127.0.0.1:5500';
+        
         // Página web simple de éxito
         res.send(`
-            <div style="text-align: center; font-family: Arial; padding-top: 50px;">
-                <h1 style="color: #007185;">¡Correo verificado con éxito!</h1>
-                <p>Ya puedes iniciar sesión en Amazon Clone.</p>
-                <a href="http://127.0.0.1:5500/registro/login.html" style="background:#f0c14b; padding:10px 20px; text-decoration:none; color:black; border-radius:4px; font-weight:bold; display:inline-block; margin-top:20px;">Ir al Login</a>
+            <div style="text-align: center; font-family: Arial, sans-serif; padding-top: 100px; background-color: #f3f3f3; height: 100vh; margin: 0;">
+                <div style="background: white; max-width: 400px; margin: auto; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" style="width: 100px; margin-bottom: 20px;">
+                    <h1 style="color: #007185; font-size: 24px;">¡Correo verificado!</h1>
+                    <p style="color: #555;">Gracias por verificar tu cuenta. Ya puedes disfrutar de todas las ventajas de Amazon Clone.</p>
+                    <a href="${frontendUrl}/registro/login.html" style="background: linear-gradient(to bottom, #f7dfa1, #f0c14b); border: 1px solid #a88734; padding: 12px 24px; text-decoration: none; color: #111; border-radius: 3px; font-weight: bold; display: inline-block; margin-top: 30px; width: 80%;">Continuar al Login</a>
+                </div>
             </div>
         `);
     } catch (err) {

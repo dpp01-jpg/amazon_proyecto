@@ -38,32 +38,41 @@ if (loginForm) {
                 
                 // Si el error es de verificación (403), añadimos un botón para reenviar el correo
                 if (res.status === 403 && data.error.includes('verifica')) {
-                    const resendBtn = document.createElement('button');
-                    resendBtn.textContent = 'Reenviar enlace de verificación';
-                    resendBtn.style.marginTop = '10px';
-                    resendBtn.style.backgroundColor = '#f3f3f3';
-                    resendBtn.style.color = '#111';
-                    resendBtn.style.border = '1px solid #ccc';
-                    resendBtn.style.padding = '5px 10px';
-                    resendBtn.style.cursor = 'pointer';
-                    resendBtn.type = 'button';
-                    resendBtn.onclick = async () => {
-                        resendBtn.textContent = 'Enviando...';
-                        try {
-                            const reRes = await fetch('http://localhost:3000/api/resend-verification', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ email })
-                            });
-                            const reData = await reRes.json();
-                            alert(reData.message || 'Enlace enviado.');
-                            resendBtn.textContent = 'Reenviar enlace (Enviado ✓)';
-                        } catch(e) {
-                            alert('Error de conexión al reenviar el correo.');
-                        }
-                    };
-                    errorMsg.appendChild(document.createElement('br'));
-                    errorMsg.appendChild(resendBtn);
+                    // Evitar duplicados
+                    if (!document.getElementById('resendBtn')) {
+                        const resendBtn = document.createElement('button');
+                        resendBtn.id = 'resendBtn';
+                        resendBtn.textContent = 'Reenviar enlace de verificación';
+                        resendBtn.style.marginTop = '10px';
+                        resendBtn.style.backgroundColor = '#f3f3f3';
+                        resendBtn.style.color = '#111';
+                        resendBtn.style.border = '1px solid #ccc';
+                        resendBtn.style.padding = '8px 12px';
+                        resendBtn.style.cursor = 'pointer';
+                        resendBtn.style.borderRadius = '3px';
+                        resendBtn.style.width = '100%';
+                        resendBtn.type = 'button';
+                        resendBtn.onclick = async () => {
+                            resendBtn.textContent = 'Enviando...';
+                            resendBtn.disabled = true;
+                            try {
+                                const reRes = await fetch('http://localhost:3000/api/resend-verification', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email })
+                                });
+                                const reData = await reRes.json();
+                                alert(reData.message || 'Enlace enviado.');
+                                resendBtn.textContent = 'Enlace reenviado ✓';
+                            } catch(e) {
+                                alert('Error de conexión al reenviar el correo.');
+                                resendBtn.textContent = 'Reenviar enlace de verificación';
+                                resendBtn.disabled = false;
+                            }
+                        };
+                        errorMsg.appendChild(document.createElement('br'));
+                        errorMsg.appendChild(resendBtn);
+                    }
                 }
             }
         } catch (err) {

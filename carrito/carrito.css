@@ -216,11 +216,15 @@
 @media (max-width: 900px) {
     .cart-main-container {
         flex-direction: column;
+        padding: 0 10px;
+    }
+    .cart-left-column {
+        width: 100%;
     }
     .cart-right-column {
         width: 100%;
         position: static;
-        order: -1; /* Summary becomes visible first on mobile in some layouts, but usually stays below */
+        order: -1;
     }
     .cart-item-image-container {
         width: 100px;
@@ -228,12 +232,32 @@
     }
     .cart-item {
         gap: 10px;
+        flex-direction: column;
+    }
+    .cart-item-image-container {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
     }
     .cart-item-price {
-        font-size: 16px;
+        font-size: 18px;
+        text-align: left;
     }
     .empty-cart-content {
         flex-direction: column;
         text-align: center;
+    }
+    .empty-cart-img {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-item-actions {
+        flex-wrap: wrap;
+    }
+    .cart-title {
+        font-size: 22px;
     }
 }
