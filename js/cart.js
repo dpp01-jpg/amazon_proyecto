@@ -18,7 +18,7 @@ export async function addToCartLogic(card, quantity) {
   try {
     // 1. Añadir al carrito en la base de datos
     console.log(quantity)
-    const res = await fetch(`http://localhost:3000/api/cart/${user.id}`, {
+    const res = await fetch(`http://192.168.12.27:3000/api/cart/${user.id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -65,7 +65,7 @@ export async function updateCart() {
 
   try {
     const user = JSON.parse(savedUser);
-    const res = await fetch(`http://localhost:3000/api/cart/${user.id}`);
+    const res = await fetch(`http://192.168.12.27:3000/api/cart/${user.id}`);
     if (res.ok) {
       const cartItems = await res.json();
       const totalQty = cartItems.reduce((total, item) => total + item.quantity, 0);

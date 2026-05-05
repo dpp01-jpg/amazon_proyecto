@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Cargar nombre de la categoría y menú de navegación
     try {
-        const resCats = await fetch('http://localhost:3000/api/categories');
+        const resCats = await fetch('http://192.168.12.27:3000/api/categories');
         if (resCats.ok) {
             const categories = await resCats.json();
             
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const minPrice = document.getElementById('filter-min-price').value;
         const maxPrice = document.getElementById('filter-max-price').value;
 
-        let url = `http://localhost:3000/api/products?category=${categoryId}`;
+        let url = `http://192.168.12.27:3000/api/products?category=${categoryId}`;
         if (name) url += `&search=${encodeURIComponent(name)}`;
         if (minPrice) url += `&minPrice=${minPrice}`;
         if (maxPrice) url += `&maxPrice=${maxPrice}`;

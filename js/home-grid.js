@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!grid) return;
 
     try {
-        const response = await fetch('http://localhost:3000/api/home-grid');
+        const response = await fetch('http://192.168.12.27:3000/api/home-grid');
         if (!response.ok) throw new Error("Fallo al conectar con la API");
         const categories = await response.json();
 

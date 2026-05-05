@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchCategories() {
         try {
-            const response = await fetch('http://localhost:3000/api/categories');
+            const response = await fetch('http://192.168.12.27:3000/api/categories');
             if (!response.ok) throw new Error("Fallo al conectar con la API de categorías");
             const categories = await response.json();
 
@@ -37,9 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
             li.style.cursor = 'pointer';
             
             li.addEventListener('click', () => {
-                if (window.filterByCategory) {
-                    window.filterByCategory(cat.id);
-                }
+                // Navegar a la página de categoría
+                window.location.href = `./categoria/category.html?id=${cat.id}`;
             });
 
             navList.appendChild(li);

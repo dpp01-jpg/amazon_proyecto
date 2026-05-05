@@ -4,7 +4,7 @@ const submitBtn = document.getElementById('submitBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 
 // URL base del backend
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://192.168.12.27:3000/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar si el usuario ya inició sesión previamente en esta ventana
